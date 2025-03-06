@@ -1,0 +1,272 @@
+====Chapter 1: Setup Environment====
+Cài đặt & chuẩn bị  môi trường thực hiện dự án
+
+##I - Cài đặt NodeJS##
+Tài liệu: https://nodejs.org/en
+1.Nodejs là gì ?
+Nodejs không phải là thư viện (library), không phải framework của javascript.
+
+Nodejs là môi trường để bạn thực thi code javascript, tại browser và server.
+
+Bạn học React (viết bằng Javascript), nên bạn cần Nodejs để có thể chạy được nó (code javascript)
+
+Điều này tương tự với:
+
+Bạn học cách sử dụng Microsoft Excel  (react)
+Bạn cần cài hệ điều hành Windows để có thể học nó (nodejs)
+
+2. Cài đặt Nodejs
+Sai lầm của beginners, là không quan tới tới version của phần mềm. Nên nhớ, công nghệ nó thay đổi theo thời gian, vì vậy, để hạn chế tối đa lỗi tối đa, bạn nên dùng version phần mềm như khóa học hướng dẫn.
+
+Điều này tương tự với:
+Bạn đang chơi 1 con game rất ngon trên Windows 7, bạn vác lên Windows 10 để chạy, có điều gì để đảm bảo rằng “sẽ không có lỗi xảy ra” ?
+
+Trong khóa học này, mình sử dụng version Node.js là 20.14.0.
+
+Vì vậy, để hạn chế tối đa lỗi có thể xảy ra, bạn vui lòng cài đặt chính xác version nodejs ở trên
+
+Khi code giống nhau, môi trường thực thi code giống nhau (version nodejs), thì rất hiếm khi lỗi xảy ra.
+
+
+Link tải nodejs v20.14.0:
+https://nodejs.org/download/release/v20.14.0/
+
+Sau khi cài đặt xong, kiểm tra bằng cách gõ câu lệnh:
+
+node -v
+
+3. Trường hợp dùng nhiều version Nodejs
+//áp dụng cho windows
+https://github.com/coreybutler/nvm-windows
+
+Video hướng dẫn cài nvm cho window, xem tại đây
+
+
+//áp dụng cho macos
+Video hướng dẫn cài nvm cho mac, xem tại đây
+
+https://dev.to/ajeetraina/how-to-install-and-configure-nvm-on-mac-os-5fgi
+
+##II - Cấu hình Visual Studio Code##
+1. Format Code
+Setup Format on Save
+Mục đích: Mỗi lần nhấn Ctrl + S , code sẽ được auto format trông cho đẹp/dễ nhìn
+
+
+2. Cài đặt Extensions
+
+Lưu ý: off các extension như eslint, prettier … để tránh xung đột
+Fact: đi làm, người ta cấu hình eslint, prettier..thông qua code, vì mỗi 1 dự án (1 khách hàng 1 yêu cầu), cài global qua extension thì cái nào cũng giống cái nào
+
+Đồng thời, với rule trên sẽ đảm bảo mọi thành viên trong team sẽ có cấu hình giống nhau
+
+
+Các extensions cài đặt thêm:
+- Code Spell Checker : hỗ trợ check chính tả khi đặt tên tiếng anh
+- Auto Complete Tag : hỗ trợ code nhanh HTML
+
+====Chapter 2: Lịch Sử Phát Triển của React (tính tới React 19)====
+Làm quen với quá trình phát triển của thư viện React
+
+##I - React là gì ? Tại sao lại học React ?
+
+1. Khái niệm “React” ?
+https://github.com/facebook/react
+
+Châm ngôn của React : Learn once, write anywhere.
+
+Có nghĩa là: bạn tốn thời gian học “tư duy của React” đúng 1 lần, bạn có thể áp dụng nó ở nhiều nơi.
+
+Ví dụ:
+React JS (hay gọi tắt là React) dùng để code website
+
+React Native dùng để code hybrid mobile app (android/ios)
+
+Electron : desktop app
+
+2. Lý do bạn học React
+
+React được Facebook chống lưng (sau này là Meta), vì vậy, câu chuyện bảo React sẽ die là rất khó (vì ngay cả Facebook/Instagram…) có rất nhiều tính năng được code nên bởi React
+
+React được sử dụng rộng rãi (phổ biến), tài liệu, source code đa dạng, phong phú
+
+=> cái gì phổ biến thì chúng ta học thôi :v
+
+##II - Phân biệt React, Angular, Vue##
+
+Để xây dựng frontend website hiện đại, chúng ta có 3 đồng chí nổi tiếng nhất:
+1.Angular
+https://angular.dev/
+
+Được chống lưng bởi Google
+Phát triển từ 2010 (version angluarJS), sau này là angular 2 (2016)
+Là framework
+2. Vue
+https://vuejs.org/
+Được chống lưng bởi Evan You và các công ty tài trợ (đa phần là Trung Quốc)
+Phát triển từ 2014
+Là framework
+
+3. React
+Được chống lưng bởi Meta (facebook)
+Phát triển từ 2013
+Là library
+
+4. So sánh React, Angular, Vue
+https://npmtrends.com/@angular/core-vs-react-vs-vue
+
+5. Nên chọn công nghệ nào ?
+Vue là con lai giữa React và Angular
+
+##III - Lịch sử phát triển của React - Chúng ta đang ở đâu ?##
+
+1.Giai đoạn phát triển
+Được chia làm 2 giai đoạn chính:
+
+Giai đoạn 1: từ khi ra đời (2013) tới tháng 4/2022
+Trước 2013 trở về trước, chúng ta có cơ chế SSR (server side rendering) và Jquery chính là vua frontend. Jquery + Wordpress là công thức làm nhanh một website.
+
+React/Angular/Vue ra đời, bổ sung cơ chế CSR (client side rendering) và khái niệm SPA (single page application)
+
+React là thư viện. Có nghĩa là, nó đơn giản nhất có thể. Bạn muốn hơn, cần phải tự làm. Ví dụ như router, caching data..
+
+
+Giai đoạn 2: từ tháng 4/2022 tới nay
+
+React là framework (ví dụ như Next.js).
+
+Website quay lại với SSR (server side rendering) với hình thức SSG (Static side rendering) - React chạy trên server (chứ không phải browser)
+
+2.Chúng ta đứng ở đâu
+
+Với khóa học này, mình sử dụng React như 1 thư viện UI (user interface) để làm giao diện thuần túy. Sử dụng React với cơ chế CSR (client side rendering)
+
+Mình cố gắng giữ mọi thứ đơn giản nhất có thể, như tuy duy ban đầu của React.
+
+##IV - Có bao nhiêu cách để code React##
+
+Có 2 cách chính để code React hiện nay:
+
+Cách 1 (cách khóa học sử dụng), là sử dụng React với cơ chế CSR (client side rendering)
+
+Các ứng dụng phổ biến: 
+Các website có nội dung thay đổi liên tục (real-time), ví dụ bạn chat Messenger trên Facebook
+Bảng giá vndirect
+Sàn binance
+
+Ưu điểm:
+Code thuần túy react (đúng ý tưởng ban đầu) - đơn giản nhất có thể
+React là thư viện UI
+
+Nhược điểm:
+SEO không tốt (ví dụ cho Google Search Engine)
+Trải nghiệm của user thấp (trong trường hợp mạng internet chậm)
+
+
+Cách 2: sử dụng React với cơ chế SSR (Server side rendering)
+
+Các ứng dụng phổ biến:
+Các website cần SEO, đọc tin tức, ví dụ: https://react.dev/
+Các website có độ chịu tải cao & quan trọng hóa trải nghiệm của người dùng (UX), ví dụ: https://tiki.vn/
+
+Ưu điểm:
+React là framework làm UI
+Hỗ trợ SEO và tăng trải nghiệm của người dùng (UX)
+
+Nhược điểm:
+Code phức tạp, vì bạn đang dùng framework
+
+##V - Nên code React với Javascript hay Typescript##
+
+Typescript = Javascript + khai báo type
+
+Với Angular, bạn “bắt buộc” phải sử dụng Typescript.
+
+Với Vue và React, bạn đều có thể dùng Javascript/Typescript, tùy sở thích của bạn.
+
+Ưu điểm khi dùng Typescript:
+Hạn chế bugs và lỗi cú pháp (vì check type)
+
+Khối lượng code base càng lớn (số lượng dòng code), càng dễ sử dụng
+
+Nhược điểm: code dài dòng hơn javascript, vì cần khai báo type
+
+
+Ưu điểm khi dùng Javascript:
+Code nhanh nhất có thể (gần giống như code cho chạy được)
+
+Nhược điểm: do quá thoải mái (không bị ràng buộc về cú pháp), rất khó để debug/ sửa đổi code khi khối lượng code base lớn
+
+##VI - Tìm tài liệu về React ở đâu
+
+Trang tài liệu mới nhất của React:
+https://react.dev/
+
+Trang tài liệu cũ của React (không dùng nữa), chỉ nên sử dụng với React < 18
+https://legacy.reactjs.org/
+
+
+Github của react: 
+https://github.com/facebook/react
+
+====chapter 3: Hello World với React
+Viết chương trình hello world với ứng dụng Reac
+
+##I - Setup dự án thực hành##
+
+1.Chuẩn bị
+Đảm bảo rằng bạn đã cài đặt Git và Node.js (version 20.14.0)
+
+2.Cài đặt dự án thực hành
+Bước 1: Download source code https://drive.google.com/file/d/1iUzmvZeV46AS-PLtcpaSBX6QFQhS5j8z/view
+
+Bước 2: cài đặt thư viện cần thiết
+npm i
+
+Lưu ý về warning/error tại terminal
+
+Bước 3: chạy dự án
+npm run dev
+
+Truy cập: http://localhost:3000/
+
+3. Có bao nhiêu cách để setup 1 dự án với React
+Create-react-app: https://create-react-app.dev/
+
+Vite: https://vitejs.dev/guide/
+
+Sử dụng framework: Nextjs, Gasby, Remix
+
+##II - Hello World với React##
+
+1.Viết chương trình Hello World
+
+Chạy dự án với câu lệnh : npm run dev
+
+Truy cập: http://localhost:3000/
+
+Bonus: cách set default app của windows 
+
+2. Cách backup source code với github
+Đảm bảo rằng bạn đã có kiến thức cơ bản về Git, nếu chưa có, xem tại đây
+
+Bước 1: tạo git repository
+
+git remote set-url origin new.git.url/here
+
+Bước 2: sử dụng lần lượt các câu lệnh sau:
+git add .
+git commit -m "your message"
+git set remote …
+git push 
+
+Warning của git: https://github.com/orgs/community/discussions/66838
+
+Giải thích: https://shzhangji.com/blog/2022/08/31/configure-git-line-endings-across-oses/
+
+
+
+
+
+
+
