@@ -221,7 +221,7 @@ Viết chương trình hello world với ứng dụng Reac
 Bước 1: Download source code https://drive.google.com/file/d/1iUzmvZeV46AS-PLtcpaSBX6QFQhS5j8z/view
 
 Bước 2: cài đặt thư viện cần thiết
-npm i
+npm i: để cài đặt các thư viện được cấu hình trong node_modules 
 
 Lưu ý về warning/error tại terminal
 
@@ -241,6 +241,8 @@ Sử dụng framework: Nextjs, Gasby, Remix
 
 1.Viết chương trình Hello World
 
+khi dùng thư viện react thì ko cần cài extension live server vì thư viện này có cơ chế dịch code hot reloading -> giúp tự cập nhật trình duyệt một cách tự động khi bấm save code 
+
 Chạy dự án với câu lệnh : npm run dev
 
 Truy cập: http://localhost:3000/
@@ -248,8 +250,6 @@ Truy cập: http://localhost:3000/
 Bonus: cách set default app của windows 
 
 2. Cách backup source code với github
-Đảm bảo rằng bạn đã có kiến thức cơ bản về Git, nếu chưa có, xem tại đây
-
 Bước 1: tạo git repository
 
 git remote set-url origin new.git.url/here
@@ -263,6 +263,489 @@ git push
 Warning của git: https://github.com/orgs/community/discussions/66838
 
 Giải thích: https://shzhangji.com/blog/2022/08/31/configure-git-line-endings-across-oses/
+
+
+##III - Cấu trúc dự án thực hành##
+
+React được sử dụng ở đây như là 1 library => cấu trúc đơn giản nhất có thể
+
+1.Giải thích ý nghĩa của các file cung cấp
+
+Thư mục: 
+node_modules: lưu trữ thư viện cài đặt
+
+public : lưu image/css/js (những cái muốn public ra ngoài internet, ai ai cũng có thể truy cập được)
+
+src : nơi dev viết code (99%)
+	index.css: nơi code css
+	App.css: code css
+	main.jsx: code react
+	App.jsx: code react
+	asset: lưu css, image, lưu trong này tốc độ truy cập sẽ nhanh hơn thư mục public và đảm bảo private -> tăng an toàn + hiệu năng
+
+Các files:
+.eslintrc.cjs : cấu hình eslint (giúp check code javascript)
+
+.gitignore : quy định những files nào "không đẩy lên git"
+
+index.html : file mà browser sẽ chạy (với mô hình CSR). hiểu đơn gian, code react sẽ được dịch và "nhét" vào đấy trong file này có tag <div>root</div> -> all code react khi code sẽ được dịch sang html/css/js sau đó đưa vào đây để render lên browser
+
+package.json : quy định thông tin về project, cũng như nhưng thư viện được cài trong dự án trong dự án có .eslintrc.cjs là nhờ đã có cấu hình cài eslintrc trong package.json này 
+	<dependecies/> tên thư viện cài đặt
+	<devDependencies/> thư viện dành cho dev ko có trong chế độ production
+ 	<script/> cách chạy project: việc viết câu lệnh nmp run dev thực tế là nó chạy vào trong script -> "dev":"vite" 
+
+package-lock.json : quy định chi tiết thông tin cài đặt thư viện trong package.json
+
+README.md : cung cấp thông tin về project
+
+vite.config.js : cấu hình dự án React với Vite - trình dịch code, chạy dự án 
+
+2. Cấu trúc dự án thực tế trông như nào (bonus)
+Nếu bạn không sử dụng framework, việc tổ chức cấu trúc (structure) như nào, phụ thuộc vào quan điểm và trình độ của mỗi người
+https://dev.to/itswillt/folder-structures-in-react-projects-3dp8
+
+##IV - Đặt tên file JS/JSX/TS/TSX cho React##
+
+js: javascript
+Dùng để định nghĩa file code javascript, hoặc code react (vì react là javascript mà)
+
+jsx : javascript + JSX
+Chỉ dùng để định nghĩa react (javascript)
+
+ts: typescript
+Chỉ dùng để định nghĩa file code typescript
+
+tsx: typescript + tsx
+Chỉ dùng để định nghĩa react (typescript)
+
+
+Bonus: Tại sao có trường hợp khi bạn đặt tên là .js hay .jsx cho React, code đều chạy được ?
+Ví dụ: https://codesandbox.io/p/sandbox/create-react-app-iuync?
+
+chủ yếu là phụ thuộc vào trình dịch code: đối với dự án này dùng Vite -> bắt buộc dùng .jsx
+nếu .js ko lỗi thì người ta có thể dùng 1 <dependecies>"react-script":...</> nó sử dụng trình duyệt code babel 
+
+##V - Cơ chế hoạt động của React với Browser (Extra)#
+
+1.Với chế độ dev (development)
+Dev coding (ngôn ngữ code)
+Compile và lưu trong memory
+
+Sử dụng các câu lệnh: 
+npm run dev
+
+vite(compiler) sẽ dịch src ra (html,css,js) lưu vào memory -> khi vào browser truy cập vào localhost:3000 -> thì máy tính sẽ trả ra (html,css,js) đã lưu đó 
+-> nếu dự án lớn -> tốc độ sẽ bị chậm đi 
+
+-> để khắc pục thì sẽ ko lưu dự án vào memory nữa mà sẽ build nó lên -> chế độ production
+
+2. Với chế độ prod (production)
+Compile
+Lưu tại cache của browser
+
+Sử dụng các câu lệnh:
+npm run build
+-> tự tạo ra thư mục dist và lưu thông tin dịch code sang (html,css,js, index.html, ...) vào trog này chứ ko lưu vào memory nữa -> h chỉ việc chạy file index.html dùng lệnh 
+npm run preview
+
+-> tốc độ nhanh hơn vì sẽ chạy sẵn file đã dịch chứ ko cần thông qa compiler nữa
+
+Một ứng dụg pát triển với react cuối cùng chỉ cho ra 1 file  -> index.html (+ import js ~ react, css) -> đây cũng là 1 trog nhữg lý do gọi là Single Page Application (SPA) bởi vì ứng dụng chỉ có 1 file
+
+##VI - Tại sao gọi React là Client Side Rendering (Bonus)##
+
+SSR: server side rendering. Mọi công việc render để tạo ra dữ liệu, được xử lý tại phía server mỗi lần điều hướng trang cần truy cập vào server lấy dữ liệu -> render ra html (load lại trang)
+
+CSR: client side rendering : công việc render và tạo ra dữ liệu xảy ra tại phía client (khi mới truy cập vào page thì all dữ liệu cần thiết đã được lưu vào pía client -> khi điều hướng trang sẽ lấy data từ pía client luôn -> (ko bị load lại trag)
+
+Giải thích:
+All thing (code react...) đều pải được complie sang html,css,js -> thì mới hiển thị lên browser được
+Sau khi đã build ứng dụng, miêu tả cơ chế SSR và CSR
+
+====Chapter 4: Tư duy thiết kế UI với Component====
+Sử dụng React dưới dạng Component để tạo nhanh UI ứng dụng
+
+##I - Khái niệm về Component
+
+1. Tư duy của framework/library
+Với tư duy của Frontend, chúng ta sẽ chia giao diện thành các component
+
+Mục đích: tăng tính “tái sử dụng” (reuse code)
+
+Component = HTML + CSS + Javascript
+
+Ví dụ: https://4x.ant.design/components/popover/
+
+
+2. Giới thiệu về arrow function (bổ trợ)
+
+Tài liệu arrow function, xem https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
+
+Ví dụ về arrow function, xem https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions#examples
+
+Phong cách của javascript hiện đại (thậm chí là java), là sử dụng “functional programing).
+
+Why ? máy tính (chỉ hiểu/và chạy nhanh) khi code của chúng ta đơn giản nhất có thể.
+
+Tất cả code của chúng ta, đều là function, tuy nhiên là “arrow function” 
+
+//todo : convert App.jsx thành arrow function
+
+
+##II - Component##
+
+Component là 1 khối code
+Component = HTML + CSS + Javascript
+Component giúp tái sử dụng code
+
+1.Cách định nghĩa 1 component với React
+
+Tài liệu: https://react.dev/learn/your-first-component#defining-a-component
+chung quy lại thì component cũng chỉ là function javascript 
+
+Bước 1: Định nghĩa một arrow function
+const MyComponent = ( )  => {   }
+
+Lưu ý: tên component bắt buộc viết hoa chữ cái đầu tiên
+
+Viết đúng: MyComponent
+
+Viết sai: myComponent
+
+Bước 2: Để biến Javascript function trở thành component, chúng ta cần return HTML
+const MyComponent = ( )  => {  	
+return ( // todo )
+ }
+
+Bước 3: Sử dụng Component như là 1 thẻ tag của HTML
+
+##III - Import/Export Component##
+
+Tài liệu: https://react.dev/learn/importing-and-exporting-components
+
+Mục đích: Reuse (tái sử dụng) code
+
+Export: xuất ra để nơi khác dùng
+khi export -> nó sẽ trông chờ export ra 1 {} Object nếu chỉ ghi export MyComponent -> sẽ bị lỗi -> export {MyComponent} như này sẽ ko lỗi nhưng mà khi dùng dấu {} để export ta cần pải thay đổi cách để import cũng pải thêm {} ở tên 
+
+-> khi click vào tên {MyComponent} -> ở import mà nó nhảy tới file code đó thì đã import được
+
+export default MyComponent; 
+import component from './components/learn/MyComponent'
+-> khi dùng export với default -> chỉ được export ra 1 Object và khi import có thể import bất kì tên nào chỉ cần đúng đường dẫn (sau from) -> vì nó chỉ xuất 1 object nên sẽ ko pân biệt tên chỗ đó dù tên gì nó cũn chỉ xuất ra 1 objetc
+
+export { FirstComponent, SecondComponent };
+import { SecondComponent, FirstComponent } from './components/learn/SecondComponent'
+-> dùng {} khi export và import nhiều object cùng lúc và pải import đúng tên export nếu ko sẽ bị lỗi 
+
+Import: gọi tới component
+
+Lưu ý, mặc định là export default
+https://developer.mozilla.org/en-US/docs/web/javascript/reference/statements/export
+
+##III - JSX##
+
+Tài liệu: https://react.dev/learn/writing-markup-with-jsx
+công cụ đứng sau react là JSX cho phép bạn code HTML trong file Javascript 
+Lưu ý: JXS ở đây là 1 công ngệ giúp dịch code React(Html + js) chứ ko pải đặt tên file .jsx (ám chỉ code react với javascript)
+
+một số quy tắc code với JSX:
+- Single Root: JSX chỉ có 1 cha duy nhất. tức là khi return chỉ được return duy nhấn 1 tag (tag này được gọi là tag cha có thể bọc nhiều tags khác) ko được return về nhiều tags cùng cấp
+nhược điểm: nếu cần return ra nhiều tags -> cần thêm 1 tag bọc bên ngoài -> khi render ra giao diện sẽ bị thừa tag này -> những lỗi liên qan đến code css dễ bị vỡ layout
+
+-> dùng 1 công cụ mới vẫn tuân theo quy tắc JSX chỉ trả ra 1 pần tử duy nhất mà ko pá vỡ cấu trúc layout -> Fragment
+
+2. Fragment
+Fragment (mảnh vỡ) giúp bạn viết code ngắn đi, và không render “thừa html”
+https://react.dev/reference/react/Fragment
+Để sử dụng: xưa sẽ dùng thẻ <React.Fragment/> bây h chỉ cần định nghĩa 1 tag rỗng và viết html trong đó <>...</> -> mỗi lần react qét code thấy kí hiệu này nó sẽ ko render ra html 
+
+
+3. Sử dụng CSS
+Lưu ý: className
+Không dùng từ “class” với JSX, vì class là  keyword “lớp” của javascript
+Lưu ý về inline style (viết theo quy tắc của object)
+
+##IV - Cách sử dụng biến số với JSX##
+
+Tài liệu: https://react.dev/learn/javascript-in-jsx-with-curly-braces
+
+Về các loại “data types” của Javascript, tham khảo tại đây
+
+Bao gồm 2 loại chính:
+
+Dữ liệu nguyên thủy: string, number, boolean, undefined, null
+	khi render những giá trị có kiểu dữ liệu trên ra HTML thì chỉ có String và number nó hiển thị còn lại sẽ ko hiển thị gì vì HTML chỉ hiển thị được những loại text còn những kiểu dữ liệu còn lại chỉ Javascript hiểu
+
+Dữ liệu object (array): tham chiếu
+	khi render 1 array ra HTML nó sẽ chỉ hiển thị liền kế những giá trị bên trong array đó (String, number)
+	đối với Object thì ko thể render ra được mún in ra nguyên biến Object thì cần convert nó qa = JSON.stringify() -> để chuyển nó thành chuỗi String 
+
+Nguyên tắc : sử dụng cặp dấu ngoặc nhọn { } để viết code javascript bên trong html
+ví dụ code css inline <div style={{borderRadius: "10px"}}> với {} bọc ngoài là tượng trưng cho việc sử dụng javascript bên trong html {} thứ 2 tượng trưng cho Object -> khi dùng Object thì ko thể dùng border-radius thì sẽ bị báo lỗi -> pải dùng chuẩn lạc đà 
+
+-> chỉ cần {} trong html ta có thể viết bất kì code js nào bên trong 
+
+Về hàm JSON.stringify()
+
+##V - Nested Component - Quan hệ Cha-Con##
+
+Cài đặt react devtool extension
+https://chromewebstore.google.com/detail/fmkadmapgofadopljbjfkapdkoienihi?hl=en
+
+khi cài đặt add vào browser -> mỗi khi f12 mìh sẽ có thêm 2 tools trên activity bar: components, profiler
+components: hiển thị all component trong dự án (có hiển thị qan hệ cha con - cha bọc ngoài con)
+
+ở đây mìh thấy 1 cha App bọc lấy những component còn lại: App này chính là function App() bên trong App.jsx trong này nó gọi đến những component khác 
+trong index.html có 1 <div root> thì khi chạy dự án react nó sẽ dịch code bỏ vào đây - file main.jsx ứng dụng khi chạy đầu tiên sẽ vào file này trong này nó dùng document.getElementById('root') để lấy ra cái root và nó render ra cái component App
+
+profiler: giúp đo hiệu năng
+
+
+Quan hệ cha-con (parent-child)
+
+//todo: giải thích ý nghĩa của file main.tsx
+
+##VI - Bài tập Components##
+
+Xóa hết layout đang có (bao gồm cả css)
+
+Cách tư duy: vẽ base component (cứ code theo cách bạn hiểu). 
+Code tất cả mọi thứ trong 1 component, nếu chia được layout thì càng tốt (chia tách parent-child)
+
+Các kiến thức áp dụng:
+Tạo component : arrow function và JSX
+Import/Export component
+CSS cho component
+Nested component
+
+Bonus thêm cách sử dụng hình ảnh (logo react)
+
+##VII - Props##
+
+Props = Property (tài sản kế thừa), sử dụng trong mối quan hệ cha con, cũng là 1 Object 
+Component cha, truyền “props” sang component con
+=> props chính là cách chúng ta truyền “data” giữa các component
+
+1. Cách truyền props
+
+Khai báo props tại component cha
+Nhận props tại component con
+//check với: number, string, object
+//todo: tạo array todo list truyền qua component con
+//sử dụng react dev tool để xem trực tiếp data
+
+2. Một vài cách code
+//lưu ý về các cách code và destructuring data
+
+Về cú pháp destructuring data: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
+Cách 1: lấy props trực tiếp từ đầu hàm
+Cách 2: sử dụng props với destructuring object
+Cách 3: lấy data trực tiếp qua props lấy trực tiếp thuốc tính có trong props qa tham số của hàm {tên thuộc tính}
+
+##VIII - Truyền Function từ cha sang con##
+
+Ví dụ trường hợp:
+Trong table có 1 button, khi nhấn button này sẽ open Modal
+https://4x.ant.design/components/modal/
+
+Trong thế giới của JavaScript, data bao gồm biến số và function.
+
+Nếu props cho phép truyền biến số từ cha sang con, liệu có thể là function ?
+
+##IX -  DOM Events##
+Tài liệu: https://react.dev/learn/responding-to-events
+Danh sách event: https://www.w3schools.com/jsref/dom_obj_event.asp
+
+2 sự kiện hay dùng nhất là click và change
+onClick: sử dụng chuột để click
+
+onChange: gõ giá trị vào input đối với onChange react có cung cấp 1 tham số "event" ~ props của html có kiểu SyntheticBaseEvent trong object này cho t biết đag làm việc với tag nào thông qa .target(thông qa đây có thể lấy giá trị .value), kiểu sử kiện .type 
+	nhưng nó chỉ lấy được .value trong cái sự kiện onChange vì pạm vi sử dụng của event chỉ nằm trong hàm onChange
+
+-> để hàm/sự kiện khác lấy được event trong onChange cần nhờ tới bộ nhớ của react tương tự như máy tính thì các chương trình sẽ hoạt động độc lập với nhau -> muốn chia sẽ chung data cần pải lưu nó vào memory đối với react thì có state chính là react memory
+
+##X -  Kiểm Soát Data với State - useState Hook##
+mỗi lần gõ kí tự vào ô input -> tự động in ra giao diện text đó đối với Angular thì có model Engine ~ đối với react để kiểm soát được data giữa các component khác nhau thì có khía niệm state (ý tưởng: 	khi onChange -> lưu dữ liệu vào state memory khi nào cần lấy ra từ đây) 
+
+all thing nên code bên trong 1 component (function) -> mới dùng được JSX 
+
+dùng useState hook để có thể cập nhật được giá trị của 1 biến (setter/getter)
+
+const [myText, setMyText] = useState("Trong");
+- myText là tên biến
+- setMyText là 1 function để cập nhật biến
+- Hook useState được import từ react và khởi tạo giá trị cho biến myText ("Trong")
+- Khi click vào useState: function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>]; trước tiên đưa vào kiểu dữ liệu Generate và đối với function đó trả ra 1 array bao gồm biến, một function cập nhật giá trị -> ở ngoài khi khởi tạo biến cũng pải gồm những thành pần đó giống như destructoring Object thì đây là destructoring array 	
+- Khi thay đổi dữ liệu của state thì giao diện sẽ tự thay đổi theo 
+-> bây h mìh sẽ thay đổi biến myText thông qa function setMyText -> giao diện sẽ thay đổi theo và khi nào muốn sử dụng biến này chỉ cần gọi tên nó ra vì nó đã được lưu vào bộ nhớ của React (thay đổi động)
+
+-> state cũng như props đều có thể truyền cho con sử dụng được nhưng đối với state thì có thể cập nhật giá trị, còn props chỉ có thể truyền từ cha sang con và chỉ cha mới thay đổi giá trị của nó 
+
+có 2 cách để thay đổi(thêm 1 pần tử mới) 1 state là 1 array: 
+	- thay đổi trực tiếp biến state đó state.push: nếu dự án lớn sẽ dễ gặp bug + sau đó set giá trị của nó lại
+	- set giá trị setTodoList([...todoList, newToDo]); copy lại all giá trị cũ ( = spread syntax) thêm giá trị mới 
+
+-> props và state khi thay đổi sẽ tự động cập nhật giao diện -> có thể hạn chế được việc load trang vì khi thay đổi giá trị state/props sẽ tự thay đổi trên thời gian thực mà ko load lại trang 
+
+Tài liệu: https://react.dev/learn/state-a-components-memory
+Mục tiêu: khi nhấn button, có thể lấy được giá trị của input dùng usestate hook
+
+Đặt state là array trên component cha
+Component con sử dụng JSON.stringify
+
+##XI - Re-render với State##
+
+Javascript random number between range 
+
+function randomIntFromInterval(min, max) { // min and max included 
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+Mục tiêu: nhấn button Add new => thêm mới data
+
+##XII - Render List##
+
+Tài liệu: https://react.dev/learn/rendering-lists
+
+1.Render List với map
+
+Giới thiệu về map, tham khảo https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+dùng map sẽ render ra 1 new array 
+
+So sánh với for loop:
+https://stackoverflow.com/questions/76868163/react-looping-over-map-vs-array
+
+Đối với map, bạn lặp qua từng phần tử và tạo ra 1 array mới
+(tức là return một giá trị mới) => rất an toàn để bạn “mutate” data (sửa đổi data)
+
+Đối với vòng lặp for, bạn lặp qua từng phần tử, và “không trả ra array mới”
+Về for-each, tham khảo https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
+ 
+//todo: CSS thêm button Delete
+
+hiện tại đang bị lỗi Warning: Each child in a list should have a unique "key" prop. lỗi này khi dùng map để lặp render dữ liệu ra giao diện -> nó yêu cầu cần key sai ở đây: todoList.map((item, index) => {
+                    return (
+                        <div className="todo-item">
+                            <div>{item.name}</div>
+                            <div><button>Delete</button></div>
+                        </div>
+                    )
+                })
+-> cần gán key cho mỗi pần tử khi lặp qa
+
+##XIII - Each child in a list should have a unique “key” prop##
+1. Phân biệt warning và error
+Giống nhau: đều có chữ “màu đỏ”, màu đỏ “thường” không tốt, right ?
+Khác nhau: 
+Error : gần như 99% là bạn cần fix, vì khi có error, xác suất rất cao ứng dụng sẽ không chạy (trừ khi bạn đã handle nó - try/catch exception)
+
+Warning: tỉ lệ cần fix là 50-50, bạn có thể fix hoặc không. Gọi là “cảnh báo”, vì nếu fix được, hiệu năng ứng dụng của bạn sẽ đạt hiệu quả tối đa
+2.Tại sao React cần key trong vòng lặp
+chúng ta ko sử dụng/nhìn thấy key chỉ dùng cho react pân biệt/định danh các pần tử của nó -> để giúp nó có thể thực hiện việc CRUD một cách hiệu qả trên từng pần tử 
+Khi sử dụng vòng lặp để render, phần tử nào cũng giống phần tử nào.
+
+Vấn đề sẽ phát sinh, nếu chúng ta “mutate” data (bao gồm thêm/sửa/xóa)
+Ví dụ: khi bạn thêm mới 1 phần tử vào array sau: (phần tử 4 được thêm mới)
+Hoặc, bạn xóa phần tử có giá trị là 2 ra khỏi array ?
+<li> 1 </li>
+<li> 2 </li>
+<li> 3 </li>
+
+React sẽ xử lý như thế nào ?
+khi thêm mới 1 pần tử thì ta chỉ chỉnh sửa pần tử cuối cùng  -> mục đích key sih ra để bảo với react chíh xác pần từ cần thay đổi trên cay DOM tức là chỉ thêm đúng 1 pần tử chứ ko pải đi render lại all giao diện ~ xóa,update
+-> khi thêm mới 1 pần tử react sẽ xét xem nó đã có key chưa nếu chưa có -> nó sẽ tạo mới pần tử đó. Nếu đã có key rồi thì nó sẽ update, ...
+
+-> cần key để biết xử lý chính xác giao diện nào chứ ko vẽ lại all giao diện 
+
+=> react sử dụng key để định danh phần tử. 
+Nếu key tồn tại => update /delete
+Nếu key không tồn tại => thêm mới
+
+3. Sử dụng key như thế nào cho chuẩn
+Mặc định, nếu bạn không dùng key, React sẽ tự động sinh key (sử dụng index của array)
+
+Không nên dùng key là chỉ số của mảng (index), hoặc chuỗi string gắn liền với index ví dụ
+	todoList.map((item, index) => {
+                    return (
+                        <div className="todo-item" key={index}>
+                            <div>{item.name}</div>
+                            <div><button>Delete</button></div>
+                        </div>
+                    )
+                })
+nếu mảng ít pần tử và chỉ có thêm mới hoặc xóa pần tử -> ko có bug khi dùng chỉ số mảg nhưng nếu mảng nhiều dữ liệu và quan trọng vấn đề sắp xếp dữ liệu/thứ tự của từng pần tử -> sẽ gặp bug
+
+ví dụ dùng index của mảng có 3 div -> lần lượt sẽ có 3 key 012 nếu ta xóa đi div ở giữa -> mảng thay đổi index (tức là nó xóa đi pần tử đag có key là 1 -> pần tử có key là 2 sẽ trở thành có key = 1 theo index của mảng mới) -> khi key của div này thay đổi thì react nó sẽ render lại pần tử này -> ko nên dùng chỉ số của mảg làm key 
+
+Key phù hợp : tức là fix cố định mỗi pần tử có 1 key trước khi đưa nó vào vòng lặp - render ra giao diện 
+Sử dụng id lấy từ backend
+Generate id “trước khi vào vòng lặp”
+
+##XIV -  Render với điều kiện##
+
+Về toán tử điều kiện của Javascript, tham khảo https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_operator
+
+Điều kiện: nếu size = 0, hiển thị hình ảnh
+Size > 0, hiển thị danh sách todo list
+
+##XV - Bài tập Delete Todo##
+Gợi ý: sử dụng filter, tham khảo https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+
+Các bước thực hiện:
+
+Bước 1: Viết sự kiện onClick cho button Delete
+
+Mỗi lần nhấn vào button, cần lấy được id của todo cần xóa
+
+Bước 2: Gọi function của component cha
+Vì hành động click button xảy ra tại component con, trong khi todoList được component cha quản lý => cần phải truyền function từ cha xuống con
+
+Tại component cha, cần viết function để xóa todo (dựa vào id là input đầu vào)
+
+Bước 3: Xóa todo
+Sử dụng hàm filter để xóa
+Set State với data đã  filter
+
+##XVI - Tổng kết các kiến thức đã học##
+
+1.Kiến thức nền tảng của React
+//cài đặt react dev tool (đã làm)
+
+Props: (viết tắt của property - tài sản), là cách chúng ta truyền dữ liệu từ cha sang con
+
+State (trạng thái), được sử dụng qua useState hook
+
+Chỉ cần props/state thay đổi, component sẽ re-render
+
+2.Kiến thức khác
+Cú pháp JSX (dấu { } )
+Cách render data (array) với map
+Cách sử dụng câu điều kiện
+
+Cách kiểm tra version của React ?
+Tại sao gọi là hook ?
+Lịch sử ra đời, react class sử dụng hook từ (react hook) version 16.8 nếu trước đó thì ko sử dụng được chỉ dùng react class thôi viết theo hướng đối tượng và mỗi đối tượng sẽ có function render ~ return () như hiện tại và thuộc tính state ~ useState Hook 
+
+code hiển tại là theo hướng function nhưng đối với function nó chỉ thực thi 1 lần ko chạy nhiều lần được nhưng khi sử dụng useState (tức là hook) nó sẽ chạy nhiều lần 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
