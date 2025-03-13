@@ -731,6 +731,219 @@ Lịch sử ra đời, react class sử dụng hook từ (react hook) version 16
 code hiển tại là theo hướng function nhưng đối với function nó chỉ thực thi 1 lần ko chạy nhiều lần được nhưng khi sử dụng useState (tức là hook) nó sẽ chạy nhiều lần 
 
 
+====Chapter 5: Điều Hướng Trang Với Router====
+Tìm hiểu cách tạo nhiều page và điều hướng trang với React Router
+
+##I -  Giới Thiệu về Router##
+
+React là thư viện (library), nó chỉ chịu trách nhiệm render (vẽ UI) thông qua props/state và JSX
+
+Vì vậy, nếu bạn muốn nhiều hơn, ví dụ như điều hướng trang (router), bạn sẽ cần “tự làm”
+
+Nếu React tích hợp sẵn Router, nó sẽ là framework (ví dụ Next.js)
+
+1.Cài đặt thư viện
+https://www.npmjs.com/package/react-router-dom
+
+paste vào cmd để cài đặt thư viện: npm i --save-exact react-router-dom@6.23.1 sau khi cài đặt thành công trong file packae....json sẽ có thêm "react-router-dom": "6.23.1"
+
+Trang chủ: https://reactrouter.com/en/main
+
+Lưu ý : Bạn vui lòng cài đặt thư viện bằng cách sử dụng câu lệnh ở trên và làm giống như video.
+
+Thư viện router nó sẽ cập nhật theo thời gian, vì vậy, điều quan trọng nhất chính là cách bạn tư duy để giải quyết vấn đề (chính là cái khóa học sẽ hướng dẫn bạn)
+
+##II - Tích Hợp Router##
+
+Tài liệu:
+https://reactrouter.com/en/main/start/tutorial
+
+Lưu ý: có thể giao diện website sẽ thay đổi theo tương lai, nên điều quan trọng nhất chính là khả năng bạn đọc tài liệu và thực hành (cái mà video hướng dẫn)
+
+Mục tiêu, tạo các page:
+Homepage: /
+/users
+/products
+/login
+/register
+
+Bước 1: import vào file main.jsx 1 tạo router + provider để điều hướng trang
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+
+Bước 2:
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <div>Hello world!</div>,
+  },
+]);
+ở đây element với value là tag html -> mình có thể thay nó = tag chính của mìh
+
+Bước 3:
+comment <App />
+thêm <RouterProvider router={router} /> 
+
+Chung quy: 
+	Bước 1 khai báo công cụ
+	Bước 2 khai báo các router tạo ra router dùng createBrowserRouter đây là hình thức lưu lịch sử duyệt website trong này sẽ khai báo từng đối tượng gồm: path chính là đường link url, ứng với mỗi path cần render ra element nào bản chất của element cũng chính là component của react
+	Bước 3 khai báo cho react thông qua <RouterProvider /> trong này cần 1 biến router 
+
+##III - Cấu trúc dự án React (Extra)##
+
+Tài liệu: 
+https://legacy.reactjs.org/docs/faq-structure.html
+
+https://dev.to/itswillt/folder-structures-in-react-projects-3dp8
+
+React là library, vì vậy, tương tự như router, việc bạn chia cấu trúc như nào, phụ thuộc vào chính bản thân bạn.
+
+Nếu React tích hợp sẵn việc chia cấu trúc thư mục, nó sẽ là framework (ví dụ Next.js)
+
+1. Chia base cấu trúc dự án
+Cách chia cấu trúc thư mục trong khóa học mang tính chất tương đối. Điều quan trọng là bạn có khả năng mở rộng và bảo trì dự án của bạn.
+
+src:
+- assets: lưu hình ảnh
+- components: lưu các component trong ứng dụng
+- routes
+- pages/screens: các route/screen 
+- services: gọi backend
+
+
+//todo: chia base component
+
+##IV - Tạo Header/Footer##
+Tài liệu:
+https://www.w3schools.com/css/css_navbar_horizontal.asp
+https://www.w3schools.com/howto/howto_css_fixed_footer.asp
+
+1.Tạo Header
+Test nhanh header https://www.w3schools.com/css/tryit.asp?filename=trycss_navbar_horizontal_black_active
+//Về CSS
+<style>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover:not(.active) {
+  background-color: #111;
+}
+
+.active {
+  background-color: #04AA6D;
+}
+</style>
+Về HTML:
+
+<ul>
+  <li><a class="active" href="#home">Home</a></li>
+  <li><a href="#news">News</a></li>
+  <li><a href="#contact">Contact</a></li>
+  <li><a href="#about">About</a></li>
+</ul>
+
+
+2. Tạo footer
+Test nhanh footer tại đây
+
+//CSS
+.footer {
+   position: fixed;
+   padding: 10px;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: #ccc;
+   text-align: center;
+}
+
+//HTML
+<div class="footer">
+  <p>Footer</p>
+</div>
+
+##V - Nested Routes với Outlet##
+Tài liệu:
+https://reactrouter.com/en/main/start/tutorial#nested-routes
+
+Khi sử dụng nested route, component con sẽ kế thừa lại “layout” của component cha.
+
+nếu khai báo như trước all object (path,element, ...) đều sẽ ngang hàng muốn nó có qan hệ cha con dùng children: [paste những object con vào đây]
+
+sau khi cấu hình trên xog thì mỗi lần vào các url con nó sẽ render ra giao diện của cha (kế thừa full giao diện của cha) -> dùng tag <Outlet/> ở parent để chỉ định nơi render ra giao diện của con trên giao diện của cha 
+
+Layout kế thừa:
+Header
+Footer
+
+Sử dụng Outlet để render component con (trong layout của component cha)
+
+##VI - Client Route với Link##
+Tài liệu: https://reactrouter.com/en/main/start/tutorial#client-side-routing giải quyết vấn đề khi bấm vào các thẻ <a/> để chuyển hướng thì bị reload lại trang
+
+theo link này họ chuyển dùng thẻ <a/ href> -> dùng <Link to/> import từ react-router-dom thực chất thì thẻ <Link> cũng render ra thẻ <a> nhưng nó đã chặn bớt pần event của js (như là event reload lại trang)
+
+##VII - Active Link##
+Tài liệu: https://reactrouter.com/en/main/start/tutorial#active-link-styling xử lý việc khi bấm vào từng thẻ <Link/> -> cần thêm class="active" cho tag đó để nó sáng lên -> dùng NavLink thay vì link mỗi lần vào 1 url nó sẽ check url trog thuộc tính "to" của chính nó nếu pải url đó thì tự động thêm class="active" nếu ko pải nó sẽ remove class đó hoặc ko làm gì 
+
+
+##VII -  Index Route##
+Tài liệu: 
+https://reactrouter.com/en/main/start/tutorial#index-routes xử lý vấn đề khi vào url con thì một số pần giao diện của cha ko muốn nó hiển thị lên làm ntn ?
+
+Index Route giúp chúng t khai báo mặc định khi vào 1 url thì cha/con nó chỉ render ra khối code nào: 
+khai báo 1 child nữa trong Parent child này đặc biệt ở chỗ là element(component) này chỉ hiển thị tại Parent ở Child sẽ ko hiển thị { index: true, element: <Index /> } 
+
+##VIII - Xử lý NotFound##
+Tài liệu: 
+https://reactrouter.com/en/main/start/tutorial#handling-not-found-errors
+
+import { useRouteError } from "react-router-dom";
+
+export default function ErrorPage() {
+  const error = useRouteError();
+  console.error(error);
+
+  return (
+    <div id="error-page">
+      <h1>Oops!</h1>
+      <p>Sorry, an unexpected error has occurred.</p>
+      <p>
+        <i>{error.statusText || error.message}</i>
+      </p>
+    </div>
+  );
+}
+
+Note:
+Về React Router, không cần học quá sâu vào nó, vì các tính năng chuyên sâu sẽ được các framework sử dụng
+
+
+
+
+
+
+
+
 
 
 
