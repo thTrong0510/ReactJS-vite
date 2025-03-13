@@ -937,6 +937,129 @@ export default function ErrorPage() {
 Note:
 Về React Router, không cần học quá sâu vào nó, vì các tính năng chuyên sâu sẽ được các framework sử dụng
 
+====Chapter 6: Setup Dự Án Backend====
+Setup dự án backend để có data phục vụ frontend React
+
+##I - Giới thiệu về dự án thực hành##
+
+Mục tiêu: Thực hành sử dụng React để xây dựng website, kết hợp với backend
+
+Công cụ: Frontend React, Backend (được cung cấp sẵn)
+
+Tính năng:
+
+CRUD Users : thêm/sửa/xóa/hiển thị Users với dữ liệu lưu trữ tại backend
+Đăng ký (register), đăng nhập (login)
+Nếu đăng nhập thành công, trả về access_token (mô hình stateless)
+CRUD Books : cần truyền access_token để có thể sử dụng
+
+##II -  Backend là gì##
+
+1. Website thực tế gồm những gì ?
+Gồm 3 thành phần chính:
+Frontend (ví dụ như React), chạy tại browser
+Backend (ví dụ java, php, nodejs…), chạy tại máy chủ server
+Database: nơi lưu trữ dữ liệu
+
+Quan hệ : Frontend (FE) gọi tới => Backend (BE) query => Database
+
+2. Tạo sao mình React không làm được website ?
+Cách chúng ta code React từ trước đến nay, đã xây dựng được website, tuy nhiên tính thực tế không cao.
+Lý do: data bị mất mỗi lần F5 (refresh), và chúng ta đang “hardcode” dữ liệu
+
+Mục tiêu: xây dựng tiki, shopee, facebook… chúng ta sẽ cần nhiều hơn, và cần sử dụng thêm các công cụ khác.
+
+Why ?
+React là frontend (HTML/CSS/JS), chạy ở phía browser, chỉ chịu trách nhiệm vẽ UI thông qua các component
+Website thực tế cần lưu trữ dữ liệu, để mỗi lần người dùng F5 (refresh), dữ liệu không bị mất như cách chúng ta đang làm
+
+3. Backend là gì ?
+Backend là cách chúng ta quản lý dữ liệu của website, mục đích phục vụ cho frontend.
+Quản lý dữ liệu, bao gồm : truy vấn (query) data (GET) và mutate data (create/update/delete)
+
+##III -  API là gì ##
+
+API = application programming interface 
+API là cầu nối giữa frontend và backend
+
+Ví du:
+https://jsonplaceholder.typicode.com/
+https://jsonplaceholder.typicode.com/todos
+
+Hiểu đơn giản nhất về API:
+API là một đường link URL. Frontend sẽ gọi vào URL đấy để lấy dữ liệu (rồi hiển thị lên giao diện)
+Backend chính là người tạo nên API (URL để frontend dùng)
+API thường được hiển thị dưới định dạng JSON: https://www.w3schools.com/js/js_json.asp
+
+##IV - Cấu hình database MongoDB##
+
+Cài đăt MongoDB Compass
+MongoDB Compass không phải là database. Nó chỉ đơn thuần là một phần mềm giúp bạn thao tác với database (MongoDB)
+Database của khóa học sẽ được tạo tại các video tiếp theo (lưu trữ trên cloud)
+Link download: https://www.mongodb.com/try/download/compass
+
+Tạo tài khoản Mongodb Atlas
+https://www.mongodb.com/cloud/atlas/register
+
+Tạo Database cho dự án
+Lưu ý check allow anywhere
+Lưu lại thông tin kết nối tới database
+
+Tài khoản admin: Thtrong && G5K0dqWBfrxUL2ai
+Link kết nối: mongodb+srv://Thtrong:G5K0dqWBfrxUL2ai@cluster0.2sweg.mongodb.net/
+
+Kiểm Tra Kết Nối Database
+Lưu ý: sau này bị lỗi, có thể tạo lại database
+Công cụ: phần mềm Mongodb Compass
+Lưu lại connection
+
+##V - Cài đặt Backend##
+
+Node Js
+
+Bước 1: download source code backend https://drive.google.com/file/d/1P28iBw1yjGUyNQCAS-SlnfjcIqRcMzqj/view
+Bước 2: update file .env (với url mongodb)
+MONGO_DB_URL=mongodb+srv://Thtrong:G5K0dqWBfrxUL2ai@cluster0.2sweg.mongodb.net/tên_database, lưu ý thêm tên của database
+
+
+Bước 3: chạy dự án
+
+Cài đặt thư viện cần thiết với câu lệnh: npm i
+
+Chạy dự án với câu lệnh: npm run dev
+
+Truy cập: http://localhost:8080/
+
+Nếu có lỗi xảy ra, cần chú ý terminal của source code
+//todo: minh họa lỗi kết nối tới database
+
+##VII - Cài đặt Postman Test API##
+
+Nguyên tắc khi sử dụng API:
+nếu postman gọi được API => backend không có lỗi, lỗi nằm tại code frontend
+
+Bước 1: Cài đặt Postman
+https://www.postman.com/downloads/
+
+Bước 2: Import collection
+File collection nằm trong source code backend, đã tải tại video #60
+File -> Import -> chọn file collection
+
+Bước 3: Chạy backend
+với câu lệnh: npm run dev
+
+Bước 4: Test API
+Nếu gọi API thành công, chứng tỏ mọi công cụ đã hoạt động (bao gồm backend và database)
+
+
+
+
+
+
+
+
+
+
 
 
 
