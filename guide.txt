@@ -1052,6 +1052,383 @@ Bước 4: Test API
 Nếu gọi API thành công, chứng tỏ mọi công cụ đã hoạt động (bao gồm backend và database)
 
 
+====Chapter 7: Module Users====
+Thực hiện CRUD Users với React và Antd
+
+##I - Có bao nhiêu cách code CSS với React##
+Không có khái niệm là học React, cần phải CSS như nào, vì vốn dĩ, React nó “không quan tâm” tới việc bạn CSS ra sao. Hãy nhớ, React là cách vẽ ra UI, và CSS là công cụ của nó (được React sử dụng)
+
+Vì vậy, trong các dự án thực tế, phụ thuộc vào từng công ty, sẽ có cách code khác nhau. Việc của bạn, là hãy trang bị những kiến thức cơ bản nhất về công cụ đấy.
+
+Cách 1 (dễ nhất) là cách đang sử dụng trong dự án, tạo riêng lẻ các file .css và import vào component
+
+Ưu điểm: đơn giản, tiện lợi
+Nhược điểm: code dài dòng và có thể bị trùng tên class (ghi đè css của nhau)
+
+Cách 2: kế thừa cách 1, bổ sung thêm “module” để hạn chế tối đa việc conflict (ghi đè CSS)
+Tham khảo: https://create-react-app.dev/docs/adding-a-css-modules-stylesheet/
+thay vì tên file .css -> thêm tiền tố module: .module.css ... nhờ thuật toán của nó mặc dù trùng tên class nhưng nó sẽ tự động generate 1 số kí tự + className đó để tránh việc trùng lặp 
+
+Nhược điểm: code vẫn dài dòng :v  
+
+Cách 3: sử dụng Sass (SCSS) less: khá phổ thông ~ pát triển từ 2 cách code trên 
+
+Cách 4: Tailwind CSS (framework) 
+https://tailwindcss.com/
+
+Ưu điểm: tất cả mọi thứ với CSS, có thể code ngắn gọn hơn thông qua các thuộc tính của Tailwind
+
+Nhược điểm: code dài (và yêu cầu bạn cần học tailwind)
+
+Cách 5: CSS in JS (tương tự React Native)
+https://cssinjs.org/?v=v10.10.1#react-jss-example
+
+##II -  Các Thư Viện Về Component##
+
+Mục đích sử dụng thư viện, là giúp giảm thiểu thời gian code Component
+
+Component của các thư viện, cần đảm bảo các yếu tố chính sau đây:
+Component cần phải “đẹp”, dễ nhìn
+Component cần phải có sự tương tác (đã hỗ trợ các hiệu ứng CSS), ví dụ như Tooltip, Modal…
+Component cần hỗ trợ chia layout responsive
+Component cần có tài liệu rõ ràng và dễ sử dụng.
+
+1.Các thư viện cung cấp component phổ biến
+
+Bootstrap: nếu bạn đã dùng bootstrap với HTML, bạn cũng có thể dùng nó với React, thông qua react-bootstrap https://react-bootstrap.netlify.app/docs/getting-started/introduction/
+
+Ưu điểm: gần gũi với tư duy Bootstrap và HTML
+Nhược điểm: số lượng component hạn chế (ít component)
+
+MUI (Material UI): cung cấp component tương tự layout của Google (Google's Material Design)
+Tham khảo https://mui.com/material-ui/getting-started/
+
+Ưu điểm: bạn control 100% component sử dụng
+Nhược điểm : số lượng component ít (với bản FREE)
+
+Antd (Ant Design): cung cấp đa dạng các component, tham khảo https://ant.design/
+
+Ưu điểm: đa dạng component
+Nhược điểm: hàng tàu khựa (Trung Quốc)
+
+Ngoài ra còn rất nhiều thư viện UI ngoài kia như Chakra UI: https://v2.chakra-ui.com/getting-started, PrimeReact: https://primereact.org/ …
+
+##III - Cài đặt Antd##
+
+Cài đặt antd:
+https://www.npmjs.com/package/antd
+
+Cài đặt antd icons:
+https://www.npmjs.com/package/@ant-design/icons
+
+Sử dụng câu lệnh cài đặt sau:
+npm i --save-exact antd@5.18.1 @ant-design/icons@5.3.7
+
+"dependecies": 
+	...
+	"@ant-design/icons": "5.3.7",
+	"antd": "5.18.1",
+	...
+
+Antd: cài đặt để sử dụng các component sẵn có của Antd
+Antd-icons: sử dụng các icons của Antd
+
+Cách sử dụng Antd Component (Bonus)
+Trang chủ: https://ant.design/components/table
+
+Để cấu hình table này cần 
+- columns: là mảng các cột gồm title là tiêu đề cột, dataIndex đây là thuộc tính để mapping dữ liệu với data, ... ngoài ra còn có các thuộc tính decorate
+- data: là mảng các dữ liệu của các cột ~ 1 hàng dữ liệu, mỗi hàng là object với key:value key pải trùng với dataIndex của columns thì mới mapping dữ liệu được	
+
+##IV - Tạo Base Giao Diện Users##
+
+//chưa làm giao diện responsive
+
+//tạo form user phía trên table
+https://ant.design/components/input
+
+https://ant.design/components/button
+
+//sử dụng component table
+https://ant.design/components/table
+
+##V - State Hóa Form##
+//lấy data của user khi submit form
+Khi dùng attr value cho thẻ Input thì giá trị đó sẽ ko chỉnh sửa được -> dùng biến state để thay vào đây -> khi thay đổi state giá trị sẽ thay đổi theo 
+
+Khi dùng state với react khi state thay đổi thì nguyên cái component (function) nó sẽ chạy lại code sẽ chạy lại từ trên xún để nó re-render lại giao diện
+
+##VI - Sử dụng thư viện để gọi API##
+
+Có rất nhiều cách để gọi API từ frontend: https://stackoverflow.com/questions/36975619/how-to-call-a-rest-web-service-api-from-javascript
+	Có thể dùng thư viện hoặc dùng browser hỗ trợ sẵn fetch (mà không cần cài đặt gì): https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+
+Dùng thuần Js thì dùng Fetch 
+Dùng Jquery code JS ở backend thì dùng XMLHttpRequest 
+Hoặc dùng ajax để gọi API khi dùng JQuery 
+
+Axios: https://github.com/axios/axios
+Request: https://www.npmjs.com/package/request
+
+Cài đặt thư viện axios:
+https://www.npmjs.com/package/axios
+
+npm i --save-exact axios@1.7.2
+
+##VII - Tạo mới User##
+
+Chuẩn bị:
+Đảm bảo rằng bạn đã chạy backend
+Có thể test api = postman để biết api có hoạt động hay không
+
+1.Giới thiệu nhanh về RESTful API
+GET : lấy dữ liệu (query/fetch data)
+POST: tạo mới dữ liệu
+PUT: update dữ liệu
+DELETE: xóa dữ liệu
+
+2.Gọi API
+Sử dụng method POST với axios:
+https://axios-http.com/docs/post_example
+
+axios.post(url, data: định dạng là 1 object, config: cấu hình header, Bearer token, ...) tham số kiểu generate của TypeScript kiểm dữ liệu trả về là promise -> có thể dùng async await để hứng kết qả 
+
+Mục tiêu: tạo mới user thành công
+
+để hiển thị thống báo thành công = 1 modal -> dùng notification của Antd 
+	    notification.success({
+                message: "create user",
+                description: "Create successful user"
+            })
+
+##VIII - Config Axios Interceptor##
+1.Kỹ năng f12 để check api
+F12 (hoặc mở Google Chrome devtool) -> chọn tab Network -> chọn API
+
+//tách service
+
+//lưu ý: chưa validate dữ liệu
+
+//nếu tạo thành công, hiển thị thông báo
+
+2.Cấu hình Interceptors
+https://github.com/axios/axios?tab=readme-ov-file#custom-instance-defaults
+
+https://axios-http.com/docs/interceptors
+
+Interceptor tương tự middleware (người đứng giữa), giúp bạn can thiệp vào request và response của lời gọi từ frontend lên backend
+
+Mô hình chiều đi (request):(1)
+Frontend -> gọi tới axios -> interceptor xử lý request (gán thêm thông tin) -> backend
+
+Mô hình chiều về (response):(2)
+Backend -> interceptor xử lý response (format data) -> frontend
+
+Cấu hình lại axios: 
+
+Quá trình (1)
+
+- Cấu hình instance trước khi tới backend gán thêm baseURL vào url của api
+	 const instance = axios.create({
+	    baseURL: 'https://api.example.com' #đây là url của backend 
+	 });
+**cùng 1 dự án frontend gọi đến nhiều server của backend thì dùng instance của axios cực kì hiệu quả = cách nhân bản thêm 1 instance khác 
+Quá trình (2)
+
+- cấu hình lại phần response trước khi trả về data bỏ bớt những pần ko cần thiết chỉ return về data cần hiển thị
+instance.interceptors.response.use(function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    if (response?.data?.data) return response.data
+    return response;
+}
+
+##IX - Xử Lý Lỗi với Interceptor##
+Tài liệu: 
+https://github.com/axios/axios?tab=readme-ov-file#custom-instance-defaults
+https://axios-http.com/docs/interceptors
+
+Check trên browser khi gửi 1 API: Network - Fetch/XHR bấm vào api 
+- Header: kiểm tra url, method, tokens, ...
+- Payload: thông tin gửi lên từ frontend -> backend
+- Preview: pản hồi từ backend -> frontend (xem nhanh ngắn ngọn hơn Response)
+- Response: full data pản hồi từ backend -> frontend 
+
+Tài liệu: https://vitejs.dev/guide/env-and-mode cấu hình các file môi trường
+Có thể đẩy những tham số ít thay đổi này vào file môi trường .env như .env.development/production lưu ý những file này phải được đặt ở cấp ngoài cùng cùng cấp với các file như package.json: 
+- những biến trong file này cần đặt tiền tố VITE_ phía trước
+- để sử dụg nhữg biến này: import.meta.env.VITE_
+
+Cấu hình thêm: xử lý trường hợp khi ko nhập liệu thì backend vẫn gửi response về nhưng axios gửi error chưa hợp lý -> cấu hình lại chỗ này trong error mà nó trả ra thì pần response của backend nằm ở error.response.data ta sẽ return ra cái này (can thiệp vào quá trình (2))
+
+Nếu ko cấu hình cái trên vẫn muốn customize thì dùng try catch để bắt lỗi của async await function gọi đến nó khi trường hợp promise trả về reject
+
+##X -  React Lifecycle##
+Tài liệu: 
+https://legacy.reactjs.org/docs/state-and-lifecycle.html
+https://react.dev/learn/lifecycle-of-reactive-effects
+
+1.Bài toán đặt ra
+//todo: viết api fetch user (chưa phân trang - pagination)
+
+Nếu set lại state như này trong component UserTable:
+	const loadUser = async () => {
+        	const res = await fetchAllUsers()
+	        setDataUser(res.data)
+        }
+	loadUser() 
+-> vòng lặp vô hạn vì khi nó chạy đến loadUser() -> nó sẽ chạy vào và set lại state khi state bị set lại -> nó sẽ chạy lại nguyên component để re-render lại component nó lại sẽ chạy vào loadUser() ...
+
+Cần gọi api để lấy danh sách users, render vào table
+Việc gọi API là bất đồng bộ (tốn thời gian) => sử dụng async/await
+
+Chỉ render data, khi đã có HTML
+
+Đối với react sẽ có 3 face/3 giai đoạn:
+- Mounting là giai đoạn chèn html vẽ ra giao diện 
+- Update các bước cũg tươg tự như Mounting
+- Unmount: ~ khi dùng facebook đứng ở trang chủ -> bấm sang watch -> thì nó cần pải xóa pần cũ/ xóa trag đó đi để vẽ lên trag mới (cái nào dùg thì mới vẽ nên ko thì xóa đi để tăng hiệu năng)
+
+Mounting/Update -> dịch code (JSX) -> render view -> unmount
+
+để xử lý lặp vô hạn trên pải dựa trên base 3 giai đoạn này -> dùng useEffect
+
+2. React Lifecycle
+Tại sao lại cần useEffect (tức là ko viết await ở trên), rồi cho chạy code
+
+##XI -  useEffect Hook##
+
+1.useEffect Hook
+Là 1 function đặc biệt, chạy sau khi component của bạn “đã mount”
+Có nghĩa là đã có HTML để cho bạn sửa đổi “giao diện”
+nên khai báo nó ngay bên dưới khi khai báo useState
+
+useEffect(() => {}, []) tham số đầu tiên là arrow function, thứ 2 là dependecis 1 biến optional [] có thể truyền hoặc ko
+
+Nếu dependecies ko được khai báo thì useEffect sẽ chạy vô hạn
+Nếu dependecies được khai báo là 1 empty array -> useEffect sẽ chạy đúng 1 lần
+Nếu dependecies
+
+Trình tự chạy của 1 component: có useEffect, async await function
+- dù useEffect hay async await function ở đầu hoặc cuối của 1 function (component) thì component cũng sẽ chạy 1 trình tự: nó sẽ chạy code từ đầu đến cuối bỏ qa 2 cái đó -> return render ra component sau đó nó mới quay về chạy useEffect + async await function 
+- tức là useEffect giúp ta can thiệp vào qa trình update tức là lúc đó giao diện nó đã được mounting lên rồi đã được render rồi thì useEffect mới hoạt động được 
+
+-> sau khi update -> useState sẽ thay đổi -> chạy lại component nhưng lúc này useEffect sẽ ko được chạy nữa vì đã qa giai đoạn update 
+
+=> dùng useEffect để can thiệp vào giai đoạn update (ép component re-render): đợi render xog ra giao diện - chỉ định đúng cái cần update 
+
+Khi refresh lại giao diện thì thường thấy 1 component/ useEffect được chạy 2 lần -> đây là 1 tính năng của react để pát hiện bug khi chạy ở chế độ development với chế độ production nó sẽ chạy 1 lần 
+
+Để bỏ trường hợp chạy 2 lần -> comment dòng lệnh dùng  </React.StrictMode> trong file main.jsx tag này giúp fix bug hiệu qả hơn 
+
+Lưu ý: ko dùng async await cho function làm tham số trong useEffect tại vì function này sẽ khiến giao diện thay đổi -> ko nên can thiệp vào luồng chạy của react 
+
+//fetch tất cả user
+
+##XII - Design Modal Create User##
+Tài liệu: https://ant.design/components/modal
+
+ <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+ </Modal>
+
+##XIII -  Lifting State Up - Hoàn Thiện Create User##
+Tài liệu: 
+https://react.dev/learn/sharing-state-between-components
+
+Lift-up State là cách chúng ta đưa state của component con, đưa cho component cha quản lý.
+Component cha sẽ truyền lại data thông qua props xuống component con.
+Mục đích: chia sẻ data giữa các component “cùng cấp”. 
+Lift Up state là tìm cha gần nhất của các component, rồi sử dụng props để chia sẻ data
+
+Dùng lift-up state ứng dụng cho việc: khi 2 component cùng cấp muốn dùng gọi useState/function/... của nhau thì đưa useState/function/ này lên thằng cha của 2 component sau đó truyền xuống lại cho 2 đứa 
+
+Khi 1 useState thay đổi thì nguyên component sẽ bị render lại 
+
+
+##XIV - Design Modal Update User##
+
+Design header với menu:
+https://ant.design/components/menu
+
+const item = [ 
+	{key: , label},
+	{},
+	...
+]
+Lable chính là tên hiển thị ngoài giao diện xem kiểu dữ liệu có thể truyền vào label trong items: click vào items - click vào kiểu trả về của items là GenericItemType - click vào kiểu dữ liệu nó extends MenuItemType - tiếp RcMenuItemType -> kiểu dữ liệu truyền vào label là Optional React.ReactNode là 1 pần tử html -> có thể truyền vào 1 component 
+Có thể set dropdown = attr Child trong các Object 
+
+const [current, setCurrent] = useState('mail');
+    const onClick = (e) => {
+        console.log('click ', e);
+        setCurrent(e.key);
+};
+Mỗi Object trong items có 1 key nếu current trùng với key -> bật cờ active (có gạch dưới khi click 1 item)
+Ở đây vẫn còn 1 lỗi là khi click qa 1 cái khác ko pải mail setc cho current -> khi bấm reload lại trang nó sẽ tự độg set current là mail mặc dù đag đứng ở url khác vì nó tự render  lại component -> tự set lại current mặc định
+
+<Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
+
+items: truyền vào 1 mảng các object là các pần tử trên Menu
+
+
+Design table với action update/delete:
+https://ant.design/components/table
+Thêm { title: 'Action', key: 'action',...) vào columns -> cột action này sẽ ko lấy data từ dataSource nhờ ko khai báo dataIndex cho object này -> nếu ko có data thì object này render dữ liệu ra giao diện nhờ attr render
+
+Thuộc tính render trong 1 object của columns cũng có kiểu trả về là 1 React.ReactMode -> nhập vào html/component
+render: (_, record) => (
+                <>
+                    <a>Invite {record.name}</a>
+                    <a>Delete</a>
+                </>
+            ), 
+viết ngắn gọn của 1 arrow function return về (html)
+ở đây record chính là 1 bản ghi/data của chính cột đó tức là nếu dataUser gồm nhiều User -> lặp qa và render ra thì mỗi lần lặp qa record chính là mỗi User
+
+
+Design modal update:
+https://ant.design/components/modal
+
+##XV - useEffect với Dependency##
+
+Sử dụng useEffect với dependency array, mỗi lần giá trị của dependency thay đổi, useEffect sẽ được chạy
+
+useEffect(() => fillUpdateModelData(dataUpdate), [dataUpdate]) 
+- dùng useEffect nếu ko truyền pần dependencies -> sau khi vẽ cây dom nó sẽ chạy vô hạn
+- nếu truyền vào [] thì sau khi vẽ dom nó sẽ chạy vào duy nhất 1 lần (nên dùng để init load data lên)
+- truyền vào 1 useState thì mặc định sau khi vẽ cay dom nó vẫn sẽ chạy vào 1 lần (xử lý lỗi nếu useState đag ko có giá trị có thể xảy ra lỗi), sau đó mỗi lần useState đó thay đổi ko chỉ component chứa useState đó đc re-render mà useEffect cũng được chạy lại 
+
+Bug: khi refersh lại trang thì useState dataUpdate = null khi click vào update của 1 hàng -> dataUpdate nó thay đổi -> chạy lại component + useEffect -> fill thông tin lên modal sau đó tắt modal thì all thông tin bị reset rỗng -> nhưng khi click lại vào update cùng hàng đó thì -> useState dataUpdate nó sẽ ko bị thay đổi giá trị -> useEffect nó ko được chạy vào -> thông tin trong modal nó sẽ ko được set 
+
+-> mỗi lần reset thông tin trên modal cũng pải reset luôn useState 
+
+cuối cùng gọi API update User ở backend 
+
+##XVI - Bài Tập Xem Chi Tiết / Delete User##
+
+1. Xem chi tiết
+Sử dụng component: 
+https://ant.design/components/drawer
+
+2. Xóa người dùng
+Sử dụng component: 
+https://ant.design/components/popconfirm
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

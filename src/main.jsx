@@ -2,8 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import LoginPage from './pages/login.jsx';
-import RegisterPage from './pages/regitser.jsx';
-import UsersPage from './pages/user.jsx';
+import RegisterPage from './pages/register.jsx';
+import UserPage from './pages/user.jsx';
 import BookPage from './pages/book.jsx';
 import './styles/global.css'
 
@@ -27,7 +27,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/users",
-        element: <UsersPage />,
+        element: <UserPage />,
       },
       {
         path: "/books",
@@ -46,9 +46,9 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    {/* <App /> */}
-    <RouterProvider router={router} />
+  // <React.StrictMode>
+  // {/* <App /> */ }
+  < RouterProvider router={router} />
 
-  </React.StrictMode>,
+  // </React.StrictMode>,
 )
