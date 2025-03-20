@@ -1417,6 +1417,269 @@ https://ant.design/components/drawer
 Sử dụng component: 
 https://ant.design/components/popconfirm
 
+====Chapter 8: Controlled Component vs Uncontrolled Component====
+So sánh ưu, nhược điểm của các cách code React và áp dụng uncontrolled component để nâng cao hiệu năng
+
+##I - Setup Eslint Giúp Phát Hiện Lỗi##
+
+Mục tiêu: khi gõ code, nếu gõ sai, phát hiện lỗi và cảnh báo
+
+Bước 1: Cài thêm extension ESLint: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+Restart VsCode nếu cần thiết
+
+Bước 2: cấu hình Rule
+'react/prop-types': 'off', vì khi code JS ko cần pải khai báo kiểu dữ liệu nên off check cái này
+'no-unused-vars': 'off', khi import thư viện/component ko sử dụng nó sẽ ko báo lỗi
+
+##II - Hiển Thị Avatar User##
+
+Hiển thị user với image (lấy từ backend)
+http://localhost:8080/images/avatar/file-name
+
+Tạo base upload button 
+
+##III -  Xử Lý Sự Kiện onChange với File##
+
+CSS Image, tham khảo https://stackoverflow.com/questions/3029422/how-to-auto-resize-an-image-while-maintaining-aspect-ratio
+
+1.Sự kiện onChange với File
+- File là loại dữ liệu đặc biệt, giúp bạn thao tác với “file upload” mà client gửi lên. https://developer.mozilla.org/en-US/docs/Web/API/File
+- Tham khảo ví dụ về sự kiện onChange https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications
+
+- Khi upload file, bạn có thể upload single file (1file/lần) hoặc multiple files (nhiều file/lần)
+
+- Quá trình upload file gồm 2 bước chính sau:
+
+Bước 1: người dùng sử dụng browser, nhấn upload btn, rồi chọn file cần upload
+
+Quá trình xảy ra: sau khi user chọn file upload, file sẽ được lưu trữ trong memory của browser
+Điều này đồng nghĩa, nếu bạn không xử lý gì thêm (ví dụ lưu trữ file), chẳng có gì xảy ra (tương tự todo, refresh website là mất dữ liệu)
+Khi file được lưu trữ trong memory, bạn có thể làm tính năng preview image, tức là hiển thị hình ảnh mà không cần tới backend
+
+Bước 2: nếu muốn lưu trữ file lâu dài, client cần tới backend để lưu trữ file.
+
+Lưu ý: sử dụng form-data thay vì json để upload file
+
+//todo: test api upload file
+
+onChange={(event) => handelUploadFile(event)}
+onChange={handelUploadFile}
+
+2 cách code này là như nhau với cách ko truyền tham số event thì đây là cách truyền tham chiếu all tham số ở onChange sẽ được truyền hết cho handelUploadFile sử dụng, còn truyền event -> nói rõ chỉ có 1 event được truyền và sử dụng 
+
+để lấy ra files thông qa event: event.target.files ở đây chỉ truyền 1 file ảnh -> lấy pần tử đầu event.target.files[0] trong này có attr size, type, ... sau này lấy cái này để validate
+
+Việc 1 function sử dụng 1 useState và setUseState thì khi set trước và sử dụng luôn trog function đó -> nó sẽ giữ giá trị cũ chứ ko set liền kết thúc hàm đó lần set cuối cùng và ra khỏi hàm đó sử dụng nó mới hiển thị kết quả đúng lần set cuối trog hàm đó 
+
+setPreview(URL.createObjectURL(fileUpload) -> sẽ tạo url tiền tố là blob pía trước -> hình ảnh này đag lưu bên trog memory trình duyệt -> nếu refresh lại browser sẽ mất vì browser sẽ xóa cache 
+
+2. Xây dựng preview Image với React
+Mục đích: client upload file và hiển thị tại browser (chưa lưu trữ tại backend)
+Tham khảo: https://stackoverflow.com/a/57781164
+
+##IV -  Hoàn thiện Update Avatar##
+
+Bước 1: Gọi API upload
+theo API cần truyền 2 tham số:
+- body: file upload
+- header: path lưu file này -> cần cấu hình theo axios
+
+customize header qua customize thêm config: https://stackoverflow.com/questions/45578844/how-to-set-header-and-options-in-axios
+cấu hình thêm header để backend biết được mìh gửi định dạng file thông qa form data (nếu ko nó sẽ hiểu là gửi String): https://stackoverflow.com/questions/47630163/axios-post-request-to-send-form-data 
+	headers: { "Content-Type": "multipart/form-data" }
+	sau đó tạo mới formdata -> append vào tên biến và value của nó tên biến đúng với API
+
+Khi customize xog Nếu gọi thành công, có được tên file upload -> kiểm tra API ở frontend request header đã có thêm pần content-type là multipart/form-data, upload-type: avatar -> server sẽ đọc pần này để lấy thông tin 
+Ngoài ra pần payload: dạng form data với tên theo tên đã cấu hình + nội dung thì dưới dạg binary
+
+-> ngoài ra sau này sẽ dùng đưa token vào đây
+
+Bước 2: Gọi API Update
+
+Truyền thêm avatar
+đối với dự án này API upload avatar hơi lỏ: 
+- const res = await uploadImageFile(selectedFile, "avatar"); -> /api/v1/file/upload 
+	Front end gửi ảnh -> server qa API này sau đó API này gửi về ảnh với 1 định dạng tên đã được mã hóa
+- const resUpdateAvatar = await updateUserAvatar(dataDetails._id, res.data.fileUploaded, dataDetails.fullName, dataDetails.phone); -> /api/v1/user 
+	sau đó gửi ảnh đó qua API update user để update lại avatar 
+
+- sau khi update xog:  xử lý set lại preview = null để ko hiển thị ảnh preview nữa + đóng drawer + loadUser -> done
+
+##V - Khái niệm Phân Trang - Pagination##
+Ví dụ phân trang với shopee, tiki
+
+1.Tại sao cần phân trang
+Tại 1 thời điểm, người dùng chỉ có thể xem một số lượng data nhất định (ví dụ 10 sản phẩm, 20 sản phẩm), trong khi bạn có cả trăm ngàn sản phẩm ???
+
+=> phân trang giúp tăng trải nghiệm của người dùng (chỉ hiển thị data cần thiết), đồng thời đảm bảo tốc độ load trang nhanh nhất có thể (ít data load sẽ nhanh)
+
+2.Kiến thức sử dụng khi phân trang
+Bản chất của việc phân trang, là sử dụng OFFSET và LIMIT (với sql)
+Tham khảo: https://www.w3schools.com/php/php_mysql_select_limit.asp
+https://www.sqltutorial.org/sql-limit/
+
+Backend sẽ dựa vào OFFSET và LIMIT để lấy lên dữ liệu tương ứng.
+
+Tuy nhiên, ở Frontend chỉ cần truyền số lượng phần tử lấy tối đa (LIMIT) và trang muốn lấy (PAGE), backend sẽ cần tự tính toán phần OFFSET
+
+Ví dụ: Frontend muốn lấy data tại page = 1, limit = 10
+Page =2, limit = 10
+
+3. Test API Phân trang
+//todo
+	    render: (_, record, index) => {
+                return (
+                    <span>{index + 1}</span>
+                );
+            },
+index ở đây sẽ hiển thị số thứ tự pần tử của table 0-9 mặc định thì Antd hỗ trợ pân trang cho table mặc định nó sẽ là 10 pần tử -> khi bấm sang trang khác index vẫn sẽ tính lại từ 0-9 -> pải dùng state để lưu trữ được trag mìh đag bấm vào có thể tùy chỉnh được số thứ tự trang này theo biến state đó 
+//viết base api phân trang
+//tạo fake data
+Truyền thêm 2 tham số là current và pageSize
+
+
+##VI - Sử Dụng Phân Trang với Antd##
+Tài liệu:
+https://ant.design/components/result
+https://ant.design/components/pagination
+https://ant.design/components/table#pagination
+
+pagination={
+{
+current: current,
+pageSize: pageSize,
+showSizeChanger: true,
+total: total,
+showTotal: (total, range) => { 
+	return (<div> {range[0]}-{range[1]} trên {total} rows</div>) 
+	}
+} 
+
+}
+
+//todo: update khi vào màn hình, cần gọi api phân trang
+
+Xử lý sự kiện onChange:
+const onChange = (pagination, filters, sorter, extra) => {  };
+<Table                
+	...
+	onChange={onChange}
+/>
+-> khi truyền tham chiếu như thế này all tham số của antd cung cấp cho onChange của table sẽ được truyền hết vào onChange function tự định nghĩa
+
+##VII - Khái niệm Re-render##
+1.Nguyên tắc của Re-render
+
+State/Props thay đổi => component re-render
+Nếu component cha render -> tất cả component component con re-render
+Cần chú ý tới form, vì có sự kiện onChange (mỗi lần typing là re-render) tức là trong 1 form khi nhập liệu 1 ô input all cái form đó sẽ được vẽ lại hết -> nên tối ưu khi nhập liệu ô input nào chỉ nên render lại chính ô đó thôi 
+
+Lưu ý: React có hiệu năng rất tốt. Bạn re-render hàng chục/tới trăm lần trên giây, nó vẫn chưa giật/lag
+
+2.Controlled Component vs Uncontrolled Component
+Control: kiểm soát
+Cách chúng ta đã làm, sử dụng state/props với form, gọi là controlled component
+
+Ưu điểm: bạn “Kiểm soát” từ a tới z . Muốn gì được nấy, đổi lại, bạn cần “tự code”
+Nhược điểm: re-render “quá nhiều lần” sẽ dẫn tới giật/lag giao diện
+
+Uncontrolled COmponent tức là ko sử dụng state của react
+
+- Khi 1 component sử dụng ít dữ liệu -> nên dùng controlled component để kiểm soát được hết bản chất nó là dùng state,props (khi 2 cái này thay đổi -> giao diện sẽ bị render lại)
+- khi 1 component nhiều dữ liệu + mún render ít + validate, format dữ liệu, ... -> dùng uncontrolled component (dùng thư viên ngoài)
+
+3.Các thư viện hay dùng
+- render ít
+- hỗ trợ validate dữ liệu
+- hỗ trợ format dữ liệu ...
+
+sẽ thao tác trực tiếp với html để lấy dữ liệu chứ ko dùng qa state/props
+
+dùng Antd -> dùng formik
+
+react hook form
+https://react-hook-form.com/
+https://www.npmjs.com/package/react-hook-form
+
+formik
+https://formik.org/
+https://www.npmjs.com/package/formik
+
+##VIII - Sử Dụng Uncontrolled Component Cho Register##
+Tài liệu: 
+https://ant.design/components/form
+
+//todo: design base form Register (fullName, email, password, phone)
+Bây h khi sử dụng uncontrolled component -> khi nhấn nút Resgiter thể biết được các ô input đag điền cái gì - lưu ntn vì ko thông qa state/props 
+-> dùng html thì dùng qa id/class thì dùng thư viện nó cũng sẽ tương tự như vậy để định danh ô input đó 
+
+để định danh nó cần bọc nó vào <Form/> <Form.Item/> của antd 
+nếu 1 component có nhiều form: -> cần khai báo form const [form] = Form.useForm(); và khai báo nó vào <Form/> để nhận biết 
+
+<Form onFinish={onFinish}/> onFinish có tham số là values chưa all ô input của Form và sẽ được thực hiện khi submit Form qa thẻ <button type="submit"/> nếu muốn dùng Button của Antd -> thì có thể set onClick(form.submit())  sử dụng thông qua đối tượng form khai báo ở trên hoa hoặc dùng attr htmlType="submit" cho thẻ Button đó 
+
+và all thuộc tính trong 1 <Form.Item/> được pân biệt = name -> lấy giá trị qa values ko dùg Id vì nó là duy nhất trên 1 page -> nếu có nhiềm form cũg kiểu đặt giống id thì ko đc mà đặt giống name nhưng khác form thì vẫn được vì name đó được quản lý qa form khác (nhiều form cần được khai báo const [form] = Form.useForm() để pân biệt)
+
+
+Mục tiêu :
+lấy được data khi submit
+Validate dữ liệu
+Hạn chế render (không sử dụng state)
+
+
+##IX - Hoàn thiện tính năng Register##
+
+khi bấm submit form của antd -> mặc định nó sẽ chạy vào hàm khái báo cho onFinish -> nhưng để validate trước khi nó chạy vào function này antd có hỗ trợ cho chúng ta mỗi Form.Item nó sẽ có 1 thuộc tính Rules giúp khai báo thông tin validate dữ liệu cho ô đó ở đây 
+
+Validate dữ liệu: ở cả frontend và backend 
+ {
+        required: true,
+        pattern: new RegExp(/\d+/g),
+        message: "Wrong format!"
+ }
+
+Gọi API backend 
+
+Giới thiệu API getFormValues/setFormValue: đây là 2 methods của form antd có thể lấy trực tiếp all giá trị thuộc trong form đang có hoặc set giá trị cho nó -> mìh có thể điều chỉnh lại form update/create user -> uncontrolled component thông qa 2 cái này -> dùng form + useEffect để fill giá trị lên khi update tức là ta chỉ dùng state của react để lấy giá trị user đó fill lên hạn chế bớt sự tác động của state 
+** ta có thể set/get cho 1 Form.Item thông qua tên của mỗi item 
+
+-> dùng thư viện antd này thì nó đã hỗ trợ rất nhiều ko cần dùng tới react 
+
+##X - Chia Layout Responsive (Extra)##
+Tài liệu:
+https://ant.design/components/grid
+
+Khác với Bootstrap (12 columns), Antd dùng 24 columns.
+(Bạn tự trang bị kiến thức về Bootstrap, như vậy sẽ thấy antd “giống hệt” nó )
+
+https://getbootstrap.com/docs/5.0/layout/breakpoints/#available-breakpoints
+Breakpoint:	class infix	Dimensions
+X-Small 	none 		< 576px
+Small 		sm 		>=576px
+...
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
 
 
 

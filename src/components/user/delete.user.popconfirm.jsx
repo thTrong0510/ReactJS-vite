@@ -1,5 +1,5 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { message, notification, Popconfirm } from "antd";
+import { notification, Popconfirm } from "antd";
 import { deleteUserById } from "../../services/api.service";
 
 

@@ -23,7 +23,7 @@ const UserForm = (props) => {
         }
         else {
             notification.error({
-                message: JSON.stringify(res.error),
+                message: "create user",
                 description: JSON.stringify(res.message)
             })
         }
