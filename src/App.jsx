@@ -23,7 +23,6 @@ const App = () => {
     const res = await getAccountApi();
     await delay(3000)
     if (res?.data?.user) {
-      console.log(">>>>")
       setUser(res.data.user);
     }
     setIsAppLoading(false);

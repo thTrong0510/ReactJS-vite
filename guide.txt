@@ -1903,11 +1903,288 @@ Sử dụng React Context API để chia sẻ data giữa các component (tránh
 Có thể sử dụng các thư viện để quản lý state hiệu quả hơn.
 
 
+====Chapter 10: Module Book (Luyện Tập)====
+Luyện tập CRUD và upload file với model Book
+
+##I -  Bài Tập Hiển Thị Book##
+Yêu cầu: Hiển thị data Book với antd Table
+
+//giải thích các field & ý nghĩa của Book
+ "_id": id của book
+ "thumbnail": ảnh thumbnail
+ "slider": [ ] : ảnh slider (bỏ qua)
+"mainText": tiêu đề
+"author": tác giả
+"price": giá tiền
+"sold": số lượng đã bán
+"quantity": số lượng
+"category": thể loại
+
+//Lưu ý: fetch data tại table
+//format giá tiền
+
+Bước 1: Tạo Fake data (hardcode)
+https://ant.design/components/table
+
+Với table của Antd, gồm 2 thành phần: dataSource và columns
+columns là nơi khai báo các cột của table, và cách mapping data
+dataSource là data của table (array chứa object)
+
+Bước 2: Gọi API để lấy data
+//bạn có thể hardcode url api để có dữ liệu
+
+Sử dụng useState để lưu trữ data của table
+Sử dụng useEffect để gọi API
+
+Bước 3: Xử lý onChange table (pagination)
+Sử dụng useState  để lưu trữ current/pageSize/total
+
+Sử dụng useEffect với dependency [  ]
+
+##II - Bài Tập Xem Chi Tiết Book##
+
+Mục tiêu: hiển thị chi tiết book (có hình ảnh) khi xem chi tiết
+
+Bước 1: Tạo Drawer
+https://ant.design/components/drawer
+
+Bước 2: Quản lý state
+
+State open/close được khai báo tại Table
+
+State data detail được khai báo tại Table
+
+Bước 3: Hiển thị data
+Nhận props từ component cha và hiển thị data
+
+Hiển thị book với image (lấy từ backend)
+http://localhost:8080/images/book/file-name
+
+##III -  Bài Tập Thêm Mới Book (Controlled Component)##
+
+Sử dụng controlled component với state của React
+
+Lưu ý: chưa check validate tại frontend => khi test cần điền đầy đủ thông tin
+
+Bước 1: Tạo form
+https://ant.design/components/modal
+
+https://ant.design/components/input-number
+//lưu ý về sự kiện onChange
+
+https://ant.design/components/select
+//lưu ý về sự kiện onChange
+
+options={[
+{ value: 'Arts', label: 'Arts' },
+{ value: 'Business', label: 'Business' },
+{ value: 'Comics', label: 'Comics' },
+
+{ value: 'Cooking', label: 'Cooking' },
+{ value: 'Entertainment', label: 'Entertainment' },
+{ value: 'History', label: 'History' },
+
+{ value: 'Music', label: 'Music' },
+{ value: 'Sports', label: 'Sports' },
+{ value: 'Teen', label: 'Teen' },
+{ value: 'Travel', label: 'Travel' },
+
+]}
+
+Bước 2: Truyền thông tin vào API
+
+Bắt buộc cần upload hình ảnh thumbnail trước khi gọi api
+
+Upload hình ảnh, sau đấy gọi api tạo mới sách
+const resUpload = await handleUploadFile(selectedFile, "book");
+
+POST http://localhost:8080/api/v1/book
+{
+    "thumbnail": "abc.png",
+    "mainText": "bla bla",
+    "author": "hoidanit",
+    "price": 150000,
+    "quantity": 100,
+    "category": "Arts"
+}
 
 
+Fix bug click vào upload image => đóng modal => click lại chính xác image đấy
+https://stackoverflow.com/a/40429197
+
+Bước 3: Reset data
+Sau khi gọi API thành công, cần fetch lại data của table, đồng thời reset state cũng như đóng modal
 
 
+##IV - Bài Tập Thêm Mới Book (Uncontrolled Component)##
+Sử dụng uncontrolled component với antd
+//Bạn có thể off component tại video trước và thay bằng component mới
 
+sử dụng form của Antd với các giá trị lấy trực tiếp từ form chứ ko dùng Model giá trị set/get thông qa useState chỉ có ảnh của book là vẫn dùg useState -> giảm việc re-render giao diện
+làm tương tự như register/login
+
+Yêu cầu: sử dụng form của antd để làm uncontrolled component
+
+Các input sau sẽ dùng form với antd
+    const [mainText, setMainText] = useState("");
+    const [author, setAuthor] = useState("");
+    const [price, setPrice] = useState("");
+    const [quantity, setQuantity] = useState("");
+    const [category, setCategory] = useState("");
+
+Bước 1: khai báo form
+https://ant.design/components/form
+const [form] = Form.useForm();
+
+Và, gán vào Component:
+<Form
+form={form}
+onFinish={handleSubmitBtn}
+>
+
+Bước 2: gán name cho input (tham khảo phần login) (validate nếu muốn)
+Cần bọc input vào form item
+
+Bạn xóa hết state của React gán cho input, thay thế bằng name
+<Form.Item
+ label="Email"
+ name="email"
+>
+  <Input />
+</Form.Item>
+
+Riêng phần upload hình ảnh vẫn dùng state
+//input file
+style={{ display: "none" }}
+
+
+Bước 3: submit form
+onOk={() => form.submit()}
+
+const handleSubmitBtn = async (values) => { }
+Và được lấy ra dựa vào form của antd, ví dụ:
+ const { mainText, author, price, quantity, category} = values;
+
+
+Upload hình ảnh, sau đấy gọi api tạo mới sách
+
+
+Bước 4: reset data trên form
+ form.resetFields();
+
+
+##V -  Bài Tập Cập Nhật Book (Controlled Component)##
+
+Sử dụng Controlled component với state của React
+
+Bạn tạo mới data để test (không nên sử dụng data được tạo sẵn)
+
+1.Sự khác biệt giữa Update và Create
+
+Khi update, bạn cần truyền thêm _id
+
+Hàm useEffect sẽ được dùng để lắng nghe sự thay đổi và gán ra trị đầu vào cho modal
+
+2. Các bước thực hiện
+
+Bước 1: khai báo state giống như khi tạo mới
+Khai báo thêm const [id, setId] = useState("");
+
+Bước 2: gán giá trị cho modal
+
+Sử dụng useEffect
+  useEffect(() => {
+        if (dataUpdate && dataUpdate._id) {
+         //your code
+         }
+    }, [dataUpdate])
+
+//hiển thị hình ảnh preview lấy trực tiếp từ backend
+setPreview(`${import.meta.env.VITE_BACKEND_URL}/images/book/${dataUpdate.thumbnail}`)
+
+
+Bước 3: logic khi update
+//không có ảnh preview + không có file => return
+
+//có ảnh preview và không có file => không upload file
+=> giá trị của thumbnail lấy từ state của dataUpdate
+
+//có ảnh preview và có file => upload file
+=> giá trị của thumbnail lấy từ kết quả của upload file
+
+API update: 
+PUT  http://localhost:8080/api/v1/book
+{
+    "_id": "66693c9066d5d0fb5fca16c0",
+    "thumbnail": "abc.png",
+    "mainText": "bla bla",
+    "author": "hoidanit",
+    "price": 150000,
+    "quantity": 100,
+    "category": "Arts"
+}
+
+##VI - Bài Tập Cập Nhật Book (Uncontrolled Component)##
+
+Sử dụng uncontrolled component với form của Antd
+
+Làm tương tự như việc bạn sử dụng Create với uncontrolled component
+
+Bước 1: khai báo form
+https://ant.design/components/form
+const [form] = Form.useForm();
+
+Và, gán vào Component:
+<Form
+form={form}
+onFinish={handleSubmitBtn}
+>
+
+Bước 2: gán giá trị cho modal tại useEffect
+https://ant.design/components/form#components-form-demo-control-hooks
+
+form.setFieldsValue({ 
+//your code
+})
+
+Bước 3: update form 
+Cần bọc input vào form item
+
+Bạn xóa hết state của React gán cho input, thay thế bằng name
+<Form.Item
+ label="Email"
+ name="email"
+>
+  <Input />
+</Form.Item>
+
+Riêng phần upload hình ảnh vẫn dùng state
+//input file
+style={{ display: "none" }}
+Bước 4: submit form
+onOk={() => form.submit()}
+
+const handleSubmitBtn = async (values) => { }
+Và được lấy ra dựa vào form của antd, ví dụ:
+ const {id,  mainText, author, price, quantity, category} = values;
+
+//todo
+
+Bước 5: reset data trên form
+ form.resetFields();
+
+
+##VII -  Bài Tập Xóa Book##
+
+//nên tạo mới data, rồi xóa
+
+//nếu muốn có lại data fake, xóa hết data, chạy lại backend, backend sẽ tự động tạo data fake (khi count = 0)
+
+//Sử dụng component Popconfirm:
+https://ant.design/components/popconfirm
+
+
+DELETE  http://localhost:8080/api/v1/book/ID-BOOK
 
 
 

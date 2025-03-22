@@ -1,5 +1,6 @@
 import axios from './axios.customize';
 
+//User API
 const createUserApi = (fullName, email, password, phone) => {
     const URL_BACKEND = "/api/v1/user";
     const data = {
@@ -87,7 +88,31 @@ const logoutApi = () => {
     return axios.post(URL_BACKEND)
 }
 
+//Book API
+const createBookApi = (thumbnail, mainText, author, price, quantity, category) => {
+    const URL_BACKEND = "/api/v1/book";
+    const data = {
+        thumbnail: thumbnail,
+        mainText: mainText,
+        author: author,
+        price: price,
+        quantity: quantity,
+        category: category
+    }
+    return axios.post(URL_BACKEND, data)
+}
+
+const fetchAllBooks = (current, pageSize) => {
+    const URL_BACKEND = `/api/v1/book?current=${current}&pageSize=${pageSize}`;
+    return axios.get(URL_BACKEND);
+}
+
+const deleteBookById = (_id) => {
+    const URL_BACKEND = "/api/v1/book/" + _id;
+    return axios.delete(URL_BACKEND)
+}
 
 export {
-    createUserApi, updateUserApi, fetchAllUsers, deleteUserById, uploadImageFile, updateUserAvatar, registerUserApi, loginUserApi, getAccountApi, logoutApi
+    createUserApi, updateUserApi, fetchAllUsers, deleteUserById, uploadImageFile, updateUserAvatar, registerUserApi, loginUserApi, getAccountApi, logoutApi,
+    fetchAllBooks, deleteBookById, createBookApi
 }

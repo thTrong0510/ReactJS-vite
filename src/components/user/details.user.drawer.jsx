@@ -30,7 +30,6 @@ const DetailsUserDrawer = (props) => {
 
         if (res?.data) {
             //success
-            console.log(res.data)
             //update user lưu file update real
             const resUpdateAvatar = await updateUserAvatar(dataDetails._id, res.data.fileUploaded, dataDetails.fullName, dataDetails.phone);
             if (resUpdateAvatar?.data) {

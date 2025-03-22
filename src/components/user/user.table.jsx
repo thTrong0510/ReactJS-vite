@@ -58,7 +58,6 @@ const UserTable = (props) => {
             //+variable: convert variable to int
             if (+current != +pagination.current) {
                 setCurrent(+pagination.current);
-                console.log(">>>>", { pagination, filters, sorter, extra })
             }
             if (+pageSize != +pagination.pageSize) {
                 setPageSize(+pagination.pageSize);
