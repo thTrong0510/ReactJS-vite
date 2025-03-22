@@ -1667,6 +1667,249 @@ $grid-breakpoints: (
   xxl: 1400px
 );
 
+====Chapter 9:  Module Auth====
+Chức năng đăng ký/đăng nhập sử dụng access token
+
+##I - Thiết kế giao diện Login + điều chỉnh giao diện Register + HomePage##
+divider ~ <hr/> https://ant.design/components/divider
+
+##II -  Cơ chế Stateless sử dụng Token##
+Có 2 cơ chế chính để xây dựng website, là stateful và stateless
+Stateful: chứa full trạng thái (state), sử dụng session
+Stateless: không chứ trạng thái (state), sử dụng token
+
+1.Mô hình truy cập 
+request từ client -> gửi lên server. Server gửi phản hồi (response) cho client
+
+Nếu như client (giao diện HTML) và server (logic xử lý) để trong cùng 1 source code
+=> đây là cơ chế stateful, vì server kiểm soát từ A tới Z
+
+Ngược lại, nếu bạn tách riêng code frontend và code backend, đây là mô hình stateless
+Ví dụ: bạn code frontend = react và backend = java (2 source code khác nhau)
+
+2.Làm sao để xác thực người dùng đã đăng nhập
+Với stateful, bạn sử dụng session 
+Với stateless (tách riêng frontend và backend):
+
+Hãy tưởng tượng, bạn đi du lịch tại nước ngoài (ví dụ từ Việt Nam sang Lào)
+
+Việt Nam (frontend), Lào (backend), và bạn muốn mua gỗ của Lào (API backend)
+
+Bước 1: bạn cần xin visa, vì visa sẽ định danh bạn là ai (passport). Visa này cần do Lào cấp (backend)
+=> đây là quá trình login, bạn login thành công, backend trả về access_token (giúp định danh bạn là ai)
+
+Bước 2: Bạn muốn buôn gỗ từ Lào về Việt Nam (frontend muốn gọi API của backend)
+
+Bạn sẽ cần chứng minh bạn “có quyền hợp pháp” (show passport ra)
+
+Như vậy, tại mỗi lời gọi API, bạn cần kèm theo access_token. Backend sẽ check cái token này, nếu hợp lệ, cho bạn truy cập API, ngược lại, từ chối truy cập
+
+
+##III - Access Token sử dụng với Stateless##
+
+Stateless, hiểu đơn giản là bạn tách riêng frontend và backend
+
+Quy trình:
+Frontend cần login để lấy token (access_token)
+
+Frontend muốn truy cập endpoint (api của backend), sẽ cần cung cấp token (access_token). Nếu token hợp lệ, backend cho phép truy cập nguồn tài nguyên, ngược lại thì không.
+
+Tại sao cần token ?
+Nếu không có cơ chế “xác thực/định danh ai là người đang đăng nhập”, thì người dùng - ai ai cũng có “vai trò giống nhau” (quyền hạn giống hệt nhau)
+
+Sau này bạn muốn: admin có quyền CRUD products, còn người dùng thông thường chỉ được phép xem data chẳng hạn.
+
+1.JWT - JSON Web Token
+https://jwt.io/
+
+Là một dạng “mã hóa” dữ liệu, giúp bạn lưu trữ thông tin người dùng đăng nhập.
+Về cơ chế tạo ra token cho frontend sử dụng, được học tại các khóa backend, tham khảo tại đây
+
+2. Các lỗi thường gặp
+
+Để cho tiện lợi, chúng ta thường gán “token” vào header của request (như vậy sẽ không cần sử url/body của api)
+Lỗi 1: không truyền Access Token (đối với các API check quyền hạn/token) ở header
+Lỗi 2: xem lại lỗi 1 :v
+
+##IV -  Nơi nào dùng để lưu trữ Token tại Frontend (Extra)##
+
+Tài liệu: https://datatracker.ietf.org/doc/html/rfc6749
+
+Thực tế, cách chúng ta đang làm, là tuân theo chuẩn OAuth2.
+
+Với Access Token, được lưu trữ tại LocalStorage
+
+Bonus: Phân biệt LocalStorage, SessionStorage, Cookies
+
+Local Storage:
+Data lưu mãi mãi (chỉ mất nếu bạn xóa nó đi)
+Code javascript có thể truy cập được
+
+Session Storage:
+Data sẽ bị mất (nếu bạn đóng tab/browser)
+Code javascript có thể truy cập được
+
+Cookie:
+Data sẽ “tự động mất” khi hết hạn
+Bạn có thể chặn/cho phép code javascript truy cập giá trị
+
+##V -  Logic Xử Lý Sau Khi Login##
+
+Bạn đã đăng nhập thành công, backend trả ra access_token và thông tin user đăng nhập.
+
+Với thông tin user đăng nhập:
+Bạn cần lưu thông tin lại, để sử dụng ở các component khác nhau, ví dụ Header cần hiển thị thông tin user đăng nhập
+
+Mỗi lần F5 (refresh website), thông tin này sẽ bị mất. Cần có cơ chế để lấy lại thông tin người dùng.
+Giải pháp: gọi API backend (truyền access token)
+
+Với access_token:
+Bạn lưu vào local storage
+Mỗi lần f5 (refresh website), bạn không bị mất thông tin token này
+Cấu hình để mỗi lần gọi API, sẽ tự động truyền thêm token ở header
+
+1.Giới thiệu về React Context
+https://react.dev/reference/react/createContext
+giải quyết vấn đề lifting up state hay chia sẽ data giữa các component cùng cấp hoặc quan hệ xa với nhau 
+
+Bài toán: sharing data giữa các component ?
+
+##VI - Sử Dụng React Context API##
+
+Tài liệu: https://react.dev/reference/react/createContext
+
+Mục tiêu:
+Lưu thông tin user vào React Context
+Hiển thị thông tin user đăng nhập lên header
+
+Bước 1: tạo context
+với context có thể lưu nhiều kiểu dữ liệu nhưng nên lưu: biến thông thường hoặc object
+
+Bước 2: wrap component
+sau khi tạo cần thông qua 1 provider: provider này sẽ bọc all component muốn sử dụng context này sau đó truyền giá trị xún những component này
+
+Bước 3: sử dụng context
+gọi nó ra = useContext(tên biến / object) trong context sử dụng tương tự state khi biến/object này thay đổi thì nó vẫn sẽ re-render component && khi refresh lại trag code vẫn sẽ được chạy từ trên xún -> context sẽ bị rỗng 
+
+##VII - React props.Children##
+Tài liệu:
+https://legacy.reactjs.org/docs/jsx-in-depth.html#children-in-jsx
+Giả sử ta có component: 
+const ParentComponent = (props) => {
+  console.log(">>>>> log parent", props)
+  return (
+    <div>Parent Component</div>
+  )
+}
+
+Khi sử dụng component:
+<ParentComponent>
+        Nguyen Van Thanh Trong
+        <ChildComponent></ChildComponent>
+</ParentComponent>
+
+-> thì props của component này sẽ có thêm 1 thuộc tính 'child' chứa 2 giá trị: 
+	Nguyen Van Thanh Trong
+	<ChildComponent/>
+-> có thể re-render động các child của 1 component thông qua props in trực tiếp nó trong component
+
+https://react.dev/learn/passing-props-to-a-component#passing-jsx-as-children
+https://stackoverflow.com/questions/49706823/what-is-this-props-children-and-when-you-should-use-it
+
+conditional check with array:
+https://stackoverflow.com/questions/66892066/conditionally-add-object-to-an-array-while-being-declared 
+đây là cách nó chỉ dùng điều kiện: 
+	...(!user["id"] ? [{
+            label: (
+                <Link to={"/login"}>
+                    Login
+                </Link>
+            ),
+            key: 'login',
+            icon: <LoginOutlined />,
+        }] : [{
+            label: (
+                `Welcome ${user["email"]}`
+            ),
+            key: 'welcome',
+            icon: <AliwangwangOutlined />,
+            children: [
+                {
+                    key: 'logout',
+                    label: <Link onClick={logout}>Logout</Link>,
+                },
+            ],
+        }]),
+
+
+##VIII - Xử Lý F5 (Refresh Page)##
+mỗi lần refresh web -> sẽ bị mất data vì hiện tại data đang được lưu trữ bởi React -> để khi refresh lại vẫn còn data thì mình cần gọi lại backend để lấy data
+
+//nhấn enter submit form login
+https://stackoverflow.com/a/59148029
+
+
+//gán token vào header với interceptor
+// Add a request interceptor
+instance.interceptors.request.use(function (config) {
+    if (typeof window !== "undefined" && window && window.localStorage && window.localStorage.getItem('access_token')) {
+        config.headers.Authorization = 'Bearer ' + window.localStorage.getItem('access_token');
+    }
+    // Do something before request is sent
+    return config;
+}, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+});
+
+nên viết set Header jwt token trog .request... này vì all request gửi lên server trc khi đến server pải qa hàm này điều kiện if là để kiểm tra có môi trường window ko ? nếu chạy trên server sẽ ko có biến window này biến này chỉ có khi và chỉ khi chạy trên browser 
+
+sau đó viết API getAccount hiện tại = access_token lưu trong local_storage
+
+mình nên sử dụng API này ở component cha chính là App và những component con sẽ có thông tin của người dùng ~ component login/register thì ko pải là con nên nó sẽ k có thôg tin người dùg này
+
+Để gọi API nên đặt trong useEffect vì lúc này giao diện đã render ra rồi: tức là hàm useEffect sẽ được chạy khi đã render hết component chứa nó mới qay lại chạy nó 
+
+//gọi API fetch Account
+//todo
+
+Hiện tại còn lỗi: khi refresh lại trang nếu có độ trễ thì nó sẽ hiển thị chữ login trước sau đó khi gọi API xog mới hiển thị Welcome
+
+##IX -  Private Route với React##
+
+Fix lỗi ở VIII: 
+	sẽ ko cho hiển thị giao diện mà chỉ hiển thị spin Icon của React khi chưa load API (https://ant.design/components/spin)
+	Hiện tại bên App ko có cái gì để giao diện này re-render -> sẽ sử dụng context vì đây là data dùng xuyên suốt ứng dụng
+
+Thêm: 
+	chỉ hiển thị trang books khi đã login
+Tài liệu: https://www.robinwieruch.de/react-router-private-routes/
+https://stackoverflow.com/a/66289280
+
+
+##X - Tổng Kết về mô hình Stateless với Access Token (JWT)##
+
+1.Luồng login và sử dụng Token
+Cơ chế xác thực người dùng được làm tại backend. Frontend sau khi login thành công, sẽ được cấp token để truy cập API (access_token)
+
+Mỗi lần truy cập API, frontend cần truyền access_token (vào header request) để xác thực. Token thường được viết dưới dạng JWT (json web token)
+
+Mỗi lần f5, thông tin lưu trữ tại frontend sẽ bị mất => cần gọi API để lấy thông tin của user đăng nhập
+	
+2.Chia sẻ data giữa các component
+
+Sử dụng React Context API để chia sẻ data giữa các component (tránh tình trạng cần truyền props từ cha sang con/hoặc giữa các component không có mối quan hệ với nhau)
+
+Có thể sử dụng các thư viện để quản lý state hiệu quả hơn.
+
+
+
+
+
+
+
+
+
 
 
 

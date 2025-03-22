@@ -1,7 +1,7 @@
 import UserForm from "../components/user/user.form";
 import UserTable from "../components/user/user.table";
-import { useEffect, useState } from 'react'
-import { fetchAllUsers } from "../services/api.service";
+import { useContext, useEffect, useState } from 'react'
+import { fetchAllUsers, getAccountApi } from "../services/api.service";
 
 const UserPage = () => {
 
@@ -13,7 +13,6 @@ const UserPage = () => {
     useEffect(() => {
         loadUser()
     }, [current, pageSize])
-
 
     const loadUser = async () => {
         const res = await fetchAllUsers(current, pageSize)

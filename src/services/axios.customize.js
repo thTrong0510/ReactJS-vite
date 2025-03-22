@@ -11,7 +11,11 @@ const instance = axios.create({
 
 //can thiệp vào quá trình gửi data từ backend về frontend
 // Add a request interceptor
+//gán token vào header với interceptor nên viết ở trog .request này vì trước khi gửi request lên server pải đi qa đâyđây
 instance.interceptors.request.use(function (config) {
+    if (typeof window !== "undefined" && window && window.localStorage && window.localStorage.getItem('access_token')) {
+        config.headers.Authorization = 'Bearer ' + window.localStorage.getItem('access_token');
+    }
     // Do something before request is sent
     return config;
 }, function (error) {
